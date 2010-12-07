@@ -1,0 +1,156 @@
+commit 4e0c5aa5ed3d791404fd134e8c6854fdcfc67693
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Tue Dec 7 15:30:15 2010 +0100
+
+    Heyu 2.9.2
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 5141a74d1b6b4d0e81e338b70a39cc2e69835406
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Tue Nov 30 15:02:17 2010 +0100
+
+    Re: Oregon Scientific THGR328N
+    
+    An attempt to fix the Heyu handling of the Oregon Scientific THGR328N
+    sensor model (supported at an Alpha level so far), based on test data
+    provided by John O'Hare.
+    
+    Reported-by: John O'Hare <oharej@it-aide.co.uk>
+    Tested-by: John O'Hare <oharej@it-aide.co.uk>
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 6352911c2026b47a46aea7ac98376accc8a8612f
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Nov 22 13:05:56 2010 +0100
+
+    Fix selected Heyu commands waiting forever on Darwin
+    
+    It occured that on a Darwin based system, the alarm() system call,
+    used in the Heyu code for timed reads from the spool file, among
+    others, may interact badly with nanosleep() system calls, intended for
+    limiting system load while waiting for an ALARM signal. This resulted
+    in selected Heyu commands waiting forever for a missed ALARM on
+    affected platforms.
+    
+    OTOH, there were no observations of excesive system load if theese
+    nanosleep()'s were omitted on a Darwin.
+    
+    Don't include nanosleep() based millisleep() helper function calls
+    into the procedure of reading from the spool file if building
+    for a Darwin system.
+    
+    Created against heyu-2.9.1.
+    
+    Reported by: Henry Butz
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 94743f92f368d012752bd6b68586c4e2d467a107
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Fri Nov 19 20:06:29 2010 +0100
+
+    X10_Timer should return a number rather than name
+    
+    --- In heyu_users@yahoogroups.com, itaide@... wrote:
+    >
+    > When a timer expires a script can be launched and the environment
+    > populated with amongst other things X10_Timer.
+    > The way I read the 'man x10scripts' leads me to believe that this
+    > should contain a numeric value of the timer that expired.
+    >
+    > > 'X10_Timer' (= timer number 1-16 which launched script)
+    >
+    > However, it contains the string 'timer' followed by the number of the
+    > timer.
+    
+    Replace those default "timerNN" names with just "NN", for consistency
+    with what settimer accepts.
+    
+    Created and tested against heyu-2.9.1.
+    
+    Reported-by: John O'Hare <oharej@it-aide.co.uk>
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 148746d09a3e73ea66501baea9a8dfb1eec56535
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Fri Nov 19 15:06:37 2010 +0100
+
+    Fix Oregon vflags handling
+    
+    I found the oregon tmin:/tmax: state flags not working as expected.
+    After examining the related code, I found the reason was vflags being
+    destroyed by a subsequent signal carrying a different parameter value,
+    humidity in my case. The same applies to all oregon sensor models
+    that report more than one paramter.
+    
+    The patch below corrects the problem for me for both real and emulated
+    oregon sensor modules, hopefully not breaking those not affected.
+    
+    Created and tested against heyu-2.9.1.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 53198dc74667f4dffe47c34f17e865e9b109fe15
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Fri Nov 19 14:29:55 2010 +0100
+
+    Fix tmax:/nottmax: state flags not recognized
+    
+    Both tmax:Hu and nottmax:Hu state flags were not recognized correctly
+    due to a trivial copy-and-paste bug. The patch below corrects
+    the problem for me.
+    
+    Created and tested against heyu-2.9.1.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 2338c36aca8826c5b151f915b2d5cdc6ba4174aa
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Fri Nov 19 14:11:06 2010 +0100
+
+    Fix counters incremented/decremented twice
+    
+    Tuesday 12 October 2010 13:44:28 John O'Hare wrote:
+    >
+    > I think there may be a couple of bugs around the counter & inccount
+    > commands:
+    
+    The problem was a counter being incremented/decremented a second time
+    when reported to the log file. This bug affected command line usage only,
+    internal commands were still working as expected.
+    
+    The patch below corrects the problem for me.
+    
+    Reported-by: John O'Hare <oharej@it-aide.co.uk>
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 8d67d17b2605d801812c1ffc7760d9a6820fd67d
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Fri Nov 19 02:35:17 2010 +0100
+
+    Avoid launching a script if wrong script name specified
+    
+    If a user happens to put a "LAUNCHER name ..." clause in his x10config
+    without providing a corresponding "SCRIPT -l name ..." definition,
+    a first script, in the x10config file order, is launched on every signal
+    that matches launch conditions of the inconsistent LAUNCHER.
+    
+    This patch fixes the problem by preventing heyu from starting up
+    if such error in the x10config file is detected.
+    
+    Created and tested against heyu-2.9.1.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 3b3f53f07cb9f23d791b083265c6b746a5e21433
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Fri Nov 19 02:11:13 2010 +0100
+
+    Heyu counter state command fix
+    
+    This patch corrects a minor problem of not being able to examine a counter
+    value with the 'heyu counter NN' state command for NN greater than 16.
+    
+    Created and tested against heyu-2.9.1.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>

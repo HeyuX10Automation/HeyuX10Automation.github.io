@@ -1,79 +1,21 @@
 
-         Release notes for Heyu 2.9.1
-                03 Sept 2010
+Current Heyu release: 2.9.2
+Release date: 2010-12-07
 
-What's New
-----------
-Added module type RS114 for the ACT model RS114 Appliance Module.
-With this module, support for AllUnitsOff, AllLightsOn, and
-AllLightsOff signals is user programmable.  Module type parameters
-AUF, ALO, and ALF match Heyu's support with the module's programming.
-This module type was requested by Chris Francois and Janusz
-Krzysztofik
+List of changes:
 
-Added module type RF234 for the ACT module RF234 Appliance Module
-which is similar to but not identical with the RS114.  This
-module type was requested by Janusz Krzysztofik.
+Janusz Krzysztofik (9):
+      Heyu counter state command fix
+      Avoid launching a script if wrong script name specified
+      Fix counters incremented/decremented twice
+      Fix tmax:/nottmax: state flags not recognized
+      Fix Oregon vflags handling
+      X10_Timer should return a number rather than name
+      Fix selected Heyu commands waiting forever on Darwin
+      Re: Oregon Scientific THGR328N
 
-For 2-way module types which can be configured to automatically
-respond with a StatusOn/Off when turned On/Off, the module type
-parameter "DEFER" instructs Heyu not to update the stored states
-of the module with the On/Off signal but let the ensuing StatusOn/Off
-signal do it. (Otherwise the changed state following the StatusOn/Off
-would always be unchanged.)
-
-Added module type RAIN8II for the WGL model Rain8II 2-way irrigation
-controller which can be configured to automatically respond with a
-StatusOn/Off signal when turned On/Off.  Thanks to Brandt Daniels
-for bringing this device to our attention.
-
-Added (experimental) command 'heyu status_emu Hu' which can be
-executed by a script to emulate the response to a received Status
-Request by a module which has no status reporting capability,
-e.g., any 1-way module.  If the state of module Hu as recorded
-by the Heyu engine is is ON, the command sends a StatusOn signal,
-otherwise a StatusOff signal.  (There are third-party X10 transmitters,
-e.g., some ACT transmitters, which send a Status Request and always
-expect a response.)  Thanks to Janusz Krzysztofik for requesting
-this feature.
-
-Added direct command 'heyu null', which does nothing. It's intended
-for use in a user-program which generates a command for execution
-by Heyu, when the conditions are such that nothing is to be done.
-
-Added configuration directives "LAUNCHPATH_PREFIX <pathspec>" and
-"LAUNCHPATH_APPEND <pathspec>" to prefix and/or append an additional 
-directory or directories to the existing $PATH in the environment
-provided for Heyu scripts. (This works only for shells where the
-path separator is a semicolon.)  Thanks to Johan Helsingius for
-requesting this feature.
-
-What's Changed
---------------
-For module types which support Status Requests, the StatusOn/Off
-signals will affect only the state of the Hu for the last unitcode
-received and only when the StatusOn/Off is received over the
-powerline (RCVI).
- 
-What's Fixed
-------------
-The On/Off (1/0) values of environment variables $X10_dmxStatus and
-$X10_Hu_dmxStatus were reversed.
-
-Added config directive "FIX_STOPSTART_ERROR YES" to work around the
-CM11A EEPROM bug "Stop Time = Start Time" which is occasionally
-encountered when uploading specific schedules.  It should be used
-(generally as a "config" line in the schedule file) only when needed
-as it results in less efficient use of the EEPROM memory space.
-Thanks to Cyril Duveau for providing a test schedule exhibiting
-the problem and testing the fix.
-
-A discrepancy between RFXSensor signals displayed in the Monitor
-and in the logfile has been resolved.
-
-Countdown timers were being reset to zero at a 'heyu restart'.
-
-
+For more details, see
+http://heyu.org/download/ChangeLog-2.9.2
 
 ============================================
 Release notes for previous heyu2/heyu 2 releases,
@@ -2973,9 +2915,79 @@ reporting a few (innocuous) compiler warnings in other files.
 
 ============================================
 
+         Release notes for Heyu 2.9.1
+                03 Sept 2010
 
+What's New
+----------
+Added module type RS114 for the ACT model RS114 Appliance Module.
+With this module, support for AllUnitsOff, AllLightsOn, and
+AllLightsOff signals is user programmable.  Module type parameters
+AUF, ALO, and ALF match Heyu's support with the module's programming.
+This module type was requested by Chris Francois and Janusz
+Krzysztofik
 
+Added module type RF234 for the ACT module RF234 Appliance Module
+which is similar to but not identical with the RS114.  This
+module type was requested by Janusz Krzysztofik.
 
+For 2-way module types which can be configured to automatically
+respond with a StatusOn/Off when turned On/Off, the module type
+parameter "DEFER" instructs Heyu not to update the stored states
+of the module with the On/Off signal but let the ensuing StatusOn/Off
+signal do it. (Otherwise the changed state following the StatusOn/Off
+would always be unchanged.)
 
+Added module type RAIN8II for the WGL model Rain8II 2-way irrigation
+controller which can be configured to automatically respond with a
+StatusOn/Off signal when turned On/Off.  Thanks to Brandt Daniels
+for bringing this device to our attention.
 
+Added (experimental) command 'heyu status_emu Hu' which can be
+executed by a script to emulate the response to a received Status
+Request by a module which has no status reporting capability,
+e.g., any 1-way module.  If the state of module Hu as recorded
+by the Heyu engine is is ON, the command sends a StatusOn signal,
+otherwise a StatusOff signal.  (There are third-party X10 transmitters,
+e.g., some ACT transmitters, which send a Status Request and always
+expect a response.)  Thanks to Janusz Krzysztofik for requesting
+this feature.
+
+Added direct command 'heyu null', which does nothing. It's intended
+for use in a user-program which generates a command for execution
+by Heyu, when the conditions are such that nothing is to be done.
+
+Added configuration directives "LAUNCHPATH_PREFIX <pathspec>" and
+"LAUNCHPATH_APPEND <pathspec>" to prefix and/or append an additional 
+directory or directories to the existing $PATH in the environment
+provided for Heyu scripts. (This works only for shells where the
+path separator is a semicolon.)  Thanks to Johan Helsingius for
+requesting this feature.
+
+What's Changed
+--------------
+For module types which support Status Requests, the StatusOn/Off
+signals will affect only the state of the Hu for the last unitcode
+received and only when the StatusOn/Off is received over the
+powerline (RCVI).
+ 
+What's Fixed
+------------
+The On/Off (1/0) values of environment variables $X10_dmxStatus and
+$X10_Hu_dmxStatus were reversed.
+
+Added config directive "FIX_STOPSTART_ERROR YES" to work around the
+CM11A EEPROM bug "Stop Time = Start Time" which is occasionally
+encountered when uploading specific schedules.  It should be used
+(generally as a "config" line in the schedule file) only when needed
+as it results in less efficient use of the EEPROM memory space.
+Thanks to Cyril Duveau for providing a test schedule exhibiting
+the problem and testing the fix.
+
+A discrepancy between RFXSensor signals displayed in the Monitor
+and in the logfile has been resolved.
+
+Countdown timers were being reset to zero at a 'heyu restart'.
+
+============================================
 
