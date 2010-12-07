@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+  <title>HEYU - Utilities and Scripts</title>
+  <meta name="author" content="Charles W. Sullivan" />
+  <meta http-equiv="content-type"
+ content="application/xhtml+xml; charset=UTF-8" />
+  <meta name="keywords"
+ content="Heyu, X10, Home Automation, Linux, UNIX, Mac OS X, free, open, source,
+    CM11A, CM12U, CM17A, ActiveHome, Firecracker, CM10A, CM11, CM11E"/>
+  <meta name="description"
+ content="HEYU is an open source program for controlling the CM11A interface"/>
+  <link rel="stylesheet" type="text/css" href="/main.css"/>
+  <link rel="shortcut icon"/>
+</head>
+
+<body id="www.heyu.org">
+<h1 id="mainhead"> <img src="/heyu_logo_200x72.gif" alt="HEYU - "
+ style="left: 0px; width: 200px; top: 21px; height: 72px;"/>X10
+Automation for Linux, Unix, and Mac OS X</h1>
+
+<div id="sectionnav">
+<h4>Navigation</h4>
+<ul>
+  <li><a title="Heyu home page" href="/">Home</a></li>
+  <li><a title="Frequently Asked Questions" href="/heyu_faq.html">FAQ</a></li>
+  <li><a title="Credits and Trademarks" href="/heyu_credits.html">Credits</a></li>
+  <li><a title="Utilities and scripts" href="/utilities/">Utilities</a></li>
+  <li><a title="Original Heyu pages" href="/version1/">Version 1 pages</a></li>
+  <li><a title="Additional Heyu Documentation" href="/docs/">Documentation</a></li>
+  <li><a title="Related Links" href="/heyu_links.html">Links</a></li>
+  <li><a title="The Heyu Open Source License" href="/heyu_license.html">License</a></li>
+  <li><a title="Download Heyu Source Code" href="/download/">Download</a></li>
+</ul>
+
+</div>
+
+<div id="util">
+<h3 style="text-align: left;">Utilities and Scripts</h3>
+
+<p>
+<a href="/utilities/UR81A_Action.sh">UR81A_Action.sh</a> &nbsp;&nbsp; 2007-10-21<br />
+
+A user-modifiable shell script which allows execution of arbitrary commands
+(e.g., multimedia controls) when an RF signal is received from an X-10 <b>UR81A</b>
+"Entertainment Anywhere" (or similar) Universal Remote by the Heyu auxiliary daemon.&nbsp;&nbsp;
+System requirements are one of the RF receivers supported by Heyu.&nbsp;&nbsp;
+See the header in the script for usage information.
+</p>
+
+<p>
+<a href="/utilities/lux23-1.0.0.tgz">Lux23</a> &nbsp;&nbsp; 2007-06-19<br />
+<a href="/utilities/lux17-1.0.0.tgz">Lux17</a> &nbsp;&nbsp; 2007-06-19<br />
+
+Lux23 and Lux17 are front ends for Heyu which provide a command line
+interface for configuring and controlling the X-10&nbsp; <b>UX23A</b>&nbsp;
+"VCR Commander II" and the older <b>UX17A</b>&nbsp; "IR Commander"&nbsp; RF-to-IR converters,
+respectively.  These converters emulate the IR remote control for TV, VCR, DVD,
+Cable box, Satellite box, and CD appliances from a variety of manufacturers.&nbsp&nbsp;
+A cable with three IR emitters is shipped with the device, providing for control
+of up to three compatible appliances via RF signals.&nbsp&nbsp;
+System requirements are an X-10&nbsp; CM17A "Firecracker" device to transmit the RF signals
+and Heyu 2.0beta.11 or higher.&nbsp;&nbsp; See the manpage included in the package for
+complete usage information.
+</p>
+
+<p>
+<a href="/utilities/tk10heyu-0.1.tgz">TK10heyu</a>
+&nbsp;&nbsp; 2007-03-25<br />
+
+TK10heyu is a simple Tcl/Tk graphical interface for Heyu under Linux
+which mimics an X-10 HR12A PalmPad remote and uses Heyu to send On, Off,
+Dim, and Bright X10 commands directly to the CM11A powerline interface.
+&nbsp;&nbsp; It is a shameless hack of Michael Corral's TK10 GUI which
+uses the "Bottlerocket" program to send X10 RF signals with a CM17A
+"Firecracker" device.
+</p>
+
+<p>
+<a href="/utilities/clock_check.sh">clock_check.sh</a>
+&nbsp;&nbsp; 2005-10-24<br />
+   
+A shell script for use with the Heyu Engine to check for excessive
+drift in the CM11A clock.  It compares the actual system time an uploaded
+timer event is executed with the time it is intended to have been executed.
+If the difference is outside a specified tolerance, an email is sent to
+specified recipients via the local email system.  See the header in the
+script for usage information.
+</p>
+      
+<p>
+<a href="/utilities/lamp_timer.sh">lamp_timer.sh</a>
+&nbsp;&nbsp; 2007-10-17 (revised)<br />
+
+When launched by the Heyu Engine by an On signal to a module, this
+BASH script starts a countdown timer which will turn Off the module after
+the number of minutes specified.  Subsequent On signals while the module
+is still in the On state will reset the countdown to its originally
+specified time.  An Off signal cancels the countdown.  See the header
+in the script for usage information.</ br>
+[Note: The user-configurable timers introduced with Heyu 2.0beta.10
+provide a more flexible alternative to using this script.]
+</p>
+
+</div>
+
+
+<div id="footer">
+   <ul id="pageauthors" style="margin-left: 20px;">
+     <li>Website Copyright 2005 Charles W. Sullivan</li>
+   </ul>
+
+   <div id="valid">
+      <ul>
+        <li><a href="http://validator.w3.org/check/referer">
+          <img alt="Valid XHTML 1.0!" src="/valid-xhtml10.asc"/></a>
+
+        <a href="http://jigsaw.w3.org/css-validator/check/referer">
+          <img alt="Valid CSS!" src="/vcss.asc"/></a></li>
+
+      </ul>
+
+   </div>
+</div>
+
+</body>
+</html>

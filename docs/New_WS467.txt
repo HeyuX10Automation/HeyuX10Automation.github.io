@@ -1,0 +1,80 @@
+
+       COMPARISON OF NEW VERSUS OLD WS467 WALL SWITCH MODULES
+                by Charles W. Sullivan
+                    11 August 2007
+                Revised 10 September 2007
+
+A major redesign by X-10 of the WS467 Wall Switch Module hardware and
+firmware occurred around the beginning of 2007.  Unfortunately however
+the model designation was not changed from WS467, which will undoubt-
+edly result in a lot of user confusion.  Even worse, some characteristics
+of the redesign make it backwards incompatible with the original design
+in many software packages.
+
+This note will attempt to describe the major characteristics of the
+new design as compared with the original design. This information was
+obtained by trial and error measurements on actual units, as X-10 has
+published nothing about the new design.  The units tested here all
+have date code sticker 07E21, however there is no assurance that units
+with later dates codes will be the new design modules.
+
+The characteristics of the original design WS467 (and rebranded units
+sold under the RCA, IBM, and Radio Shack labels) remained basically
+unchanged over the years. The module responds to X10 signals
+All_Units_Off, All_Lights_On, On, Off, Dim, Bright, and All_Lights_Off.
+
+If an original-design module is in the Off state, a received Dim
+signal will first bring it to full brightness before dimming.  The
+only way to avoid this is never to turn the module Off but instead
+to dim it to minimum brightness (which is usually visibly indistin-
+guishable from darkness).  Then it can be brightened as desired from
+that point.
+
+The new design shares many characteristics with the discontinued
+LM14A 2-way Lamp Module although it remains a 1-way module, i.e., with
+no status-reporting capability.  However it now supports the Extended
+Code Preset function which allows it to be directly set to any arbi-
+trary brightness level 0-63. In common with the LM14A, minimum
+brightness (at Extended Code Preset level 1) is nowhere near darkness,
+but about at the level of 8% of line voltage.  However this is not a
+critical limitation now that the module supports the Extended Code
+Preset function.  It is fully Off when turned Off (at Extended Code
+Preset level 0) by either an Off command or by an Extended Code Preset
+command.  The new design also supports the Extended Code All_Units_On
+and All_Units_Off functions.  Curiously, and unlike the LM14A or the
+original-design WS467, the redesigned WS467 no longer supports the
+All_Lights_Off function.
+
+Like the LM14A, the new design also supports Extended Code group
+commands (at least those which are applicable to 1-way modules).
+Modules can be configured as members of groups, then all modules which
+are members of a group will simultaneously respond to a single "group
+execute" command.
+
+The new design has a "resume" feature similar to the LM14A, i.e., the
+ability of returning from Off to the previously set brightness level,
+which like the LM14A is called into play when the module receives the
+On or All_Lights_On signal, or if it is manually turned on with a tap
+on the push-button.  (This behavior differs from the redesigned LM465
+plug-in Lamp Module which resumes the previous level when it receives
+a Dim or Bright signal).
+
+Most curious however is that the redesigned WS467 cannot be brightened
+from the Off state by a Bright (or Dim) signal; it has to first be 
+turned On.  It thus differs from all other dimmer modules from X-10
+and those from most other manufacturers.  This one difference renders
+the redesigned WS467 backwards incompatible with the original design
+in many software packages, including some features of X-10's flagship
+product ActiveHome Pro (for Microsoft Windows).
+
+Manual operation of the redesigned WS467 with the push button now
+has the capability of setting the brightness level.  When Off, the 
+first press of the button turns the module On to the previous level.
+Once On, the next press and hold of the button gradually dims the
+module.  Additional presses and holds alternate between brightening
+and dimming the module.  In either mode, a quick tap of the button
+turns the module Off.
+
+More details about the characteristics of the new design LM465 will
+undoubtedly reveal themselves with time.
+

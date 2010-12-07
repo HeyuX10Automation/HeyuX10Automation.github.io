@@ -1,0 +1,76 @@
+
+       COMPARISON OF NEW VERSUS OLD LM465 LAMP MODULES
+                by Charles W. Sullivan
+                    22 July 2007
+                Revised 10 September 2007
+
+A major redesign by X-10 of the LM465 plug-in Lamp Module hardware and
+firmware occurred around the beginning of 2007.  Unfortunately however
+the model designation was not changed from LM465, which will undoubt-
+edly result in a lot of user confusion.
+
+This note will attempt to describe the major characteristics of the
+new design as compared with the original design. This information was
+obtained by trial and error measurements on actual units, as X-10 has
+published nothing about the new design other than a short note in
+their knowledge-base wiki (http://kbase.x10.com) indicating it has a
+"Soft-Start" feature.  The units tested here all have date code
+sticker 07D17, however there is no assurance that date codes later
+than this will be the redesigned units and at least one instance where
+it was not has been reported
+
+The characteristics of the original design LM465 (and rebranded units
+sold under the RCA, IBM, and Radio Shack labels) remained basically
+unchanged over the years from those of the original BSR units (brown
+housing with side thumbwheels).  The module responds to X10 signals
+All_Units_Off, All_Lights_On, On, Off, Dim, and Bright.  Alone among
+dimmer modules manufactured by X-10 and others, it does not support
+the All_Lights_Off function.
+
+If an original design module is in the Off state, a received Dim
+signal will first bring it to full brightness before dimming.  The
+only way to avoid this is never to turn the module Off but instead
+to dim it to minimum brightness (which is usually visibly indistin-
+guishable from darkness).  Then it can be brightened as desired from
+that point.
+
+The new design shares many characteristics with the discontinued
+LM14A 2-way Lamp Module although it remains a 1-way module, i.e., with
+no status-reporting capability.  However it now supports the Extended
+Code Preset function which allows it to be directly set to any arbi-
+trary brightness level 0-63.  In common with the LM14A it now supports
+the All_Lights_Off function.  Also in common with the LM14A, minimum
+brightness (at Extended Code preset level 1) is nowhere near darkness,
+but about at the level of 13% of line voltage.  However this is not a
+critical limitation now that the module supports the Extended Code
+preset function.  It is fully Off when turned Off (at Extended Code
+preset level 0) by either an Off command or by an Extended Code Preset
+command.  The new design also supports the Extended Code All_Units_On
+and All_Units_Off functions.
+
+Like the LM14A, the new design also supports Extended Code group
+commands (at least those which are applicable to 1-way modules).
+Modules can be configured as members of groups, then all modules which
+are members of a group will simultaneously respond to a single "group
+execute" command.
+
+The new design has a "resume" feature similar to the LM14A, i.e., the
+ability of returning from Off to the previously set brightness level.
+However this feature is not called into play when the module receives
+an On signal but when it receives a Dim signal. The dimming continues
+from that point, so to repeatedly turn Off and then resume the exact
+same level, it is necessary to follow the Dim signal with a Bright
+signal of the same magnitude.  If the new design receives an On signal
+when Off, it ramps up gradually over about two seconds, but to full
+brightness regardless of the previous level.
+
+More details about the characteristics of the new design LM465 will
+undoubtedly reveal themselves with time.
+
+
+
+
+
+
+
+

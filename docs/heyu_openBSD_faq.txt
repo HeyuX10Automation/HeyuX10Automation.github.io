@@ -1,0 +1,86 @@
+Author: gunner@styx2002.no-ip.org
+Subject: heyu and OpenBSD -- notes and FAQ
+
+You see, I run OpenBSD systems, and though you appear to be aware 
+that 'heyu' compiles and runs on OpenBSD boxes, I thought I'd let 
+you know that it does indeed do so with a bit of elbow grease. So, 
+these FAQ entries below, are geared towards getting 'heyu' compiled 
+and running on such a system. It took me a while to figure some of 
+this stuff out, especially how to setup the serial port tty (who 
+really knows that a 'ttyflags' command exists? Hmmmm?), so I was
+hoping that I could share these experiences -- really just an
+enhancement to your existing FAQ questions.
+
+------------------------------------------------------------------------
+
+1. How do I get heyu configured for an OpenBSD system?
+
+   Use the configuration script and configure for FreeBSD. It seems
+   to be compatible:
+
+   % ./Configure freebsd
+   % make
+   # make install
+
+   There are a few minor warnings generated, but the result seems 
+   to link and execute successfully, at least for heyu version 1.33
+   and OpenBSD 3.2.
+
+
+2. What tty should I use for an OpenBSD system?
+
+   As with all OSes, this will depend on your configuration and
+   kernel and which serial port you are using to communicate with
+   the CM11A. By far the most common tty for use with a GENERIC (3.2)
+   installation and a connection to the first serial port 
+   is /dev/tty00.
+
+
+3. I've set the tty device in ~/.x10config to /dev/tty00. I'm
+   running OpenBSD, but 'heyu' complains about device permissions.
+   How do I fix it?
+
+   OpenBSD installs the serial tty devices with somewhat restricted
+   file permissions:
+   
+   crw-rw----  1 uucp  dialer    8,   0 Jun  2 15:42 /dev/tty00
+
+   It probably is a good idea from a security standpoint to run
+   'heyu' under a non-root user. Either add the non-root user to
+   the dialer group in /etc/group, or if you don't mind opening
+   the device permissions:
+
+   (as root)
+   # chmod o+rw /dev/tty00
+
+<and more information in addition to the existing FAQ (29)>
+
+29) I use OpenBSD and don't see any information from the CM11.
+    Running heyu info says Firmware revision Level = 0 and Interface clock not
+    yet set.
+
+    OpenBSD requires that you add the following to /etc/ttys:
+    tty00   "/usr/libexec/getty std.9600"   unknown off local
+
+    Note that it is necessary to include the 'local' keyword.
+
+    You will need to reconfigure the port after making
+    the change to /etc/ttys by running:
+
+    (as root)
+    # ttyflags tty00
+
+
+------------------------------------------------------------------------
+
+I hope this can be used somehow to help other users. That 'ttyflags'
+business is really what threw me, but the other questions did
+come up, and while I can't say for sure that they will be applicable
+to all OpenBSD installations, or even if 'heyu' will remain compatible
+with OpenBSD, it certainly seemed to be a step in the right direction 
+for my installation. If it helps, I'm running heyu version 1.33, as a
+stable build under OpenBSD 3.2.
+
+Best regards,
+- Paul
+

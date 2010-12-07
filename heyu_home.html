@@ -1,0 +1,214 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+
+<head>
+  <title>HEYU - Introduction</title>
+  <meta name="author" content="Charles W. Sullivan" />
+  <meta http-equiv="content-type"
+ content="application/xhtml+xml; charset=UTF-8" />
+  <meta name="verify-v1"
+ content="Hd8LTpHbm7Cpqu3BuI4l+CtlBjQooIIPG+2oRXMvvk0=" />
+  <meta name="keywords"
+ content="Heyu, X10, Home Automation, Linux, UNIX, Mac OS X, free, open, source,
+    CM11A, CM12U, CM17A, ActiveHome, Firecracker, CM10, CM10A, CM11, CM11E, HD11,
+    HD11A, HD16, HD16A, HC60CRX, Home Director, Home Control"/>
+  <meta name="description"
+ content="HEYU is an open source program for controlling the CM11A interface"/>
+  <link rel="stylesheet" type="text/css" href="/main.css"/>
+  <link rel="shortcut icon"/>
+</head>
+
+<body id="www.heyu.org">
+<h1 id="mainhead"> <img src="/heyu_logo_200x72.gif" alt="HEYU - "
+ style="left: 0px; width: 200px; top: 0px; height: 72px;"/>X10
+Automation for Linux, Unix, and Mac OS X</h1>
+
+<div id="sectionnav">
+<h4>Navigation</h4>
+<ul>
+  <li><a title="Heyu home page" href="/">Home</a></li>
+  <li><a title="Frequently Asked Questions" href="/heyu_faq.html">FAQ</a></li>
+  <li><a title="Credits and Trademarks" href="/heyu_credits.html">Credits</a></li>
+  <li><a title="Utilities and scripts" href="/utilities/">Utilities</a></li>
+  <li><a title="Original Heyu pages" href="/version1/">Version 1 pages</a></li>
+  <li><a title="Additional Heyu Documentation" href="/docs/">Documentation</a></li>
+  <li><a title="Related Links" href="/heyu_links.html">Links</a></li>
+  <li><a title="The Heyu Open Source License" href="/heyu_license.html">License</a></li>
+  <li><a title="Download Heyu Source Code" href="/download/">Download</a></li>
+  <li><a title="Heyu development projects" href="/heyu_projects.html">Projects</a></li>
+</ul>
+
+</div>
+
+
+<div id="main">
+<h3 style="text-align: left;">Introduction</h3>
+
+<p><b>HEYU</b>
+is a text-based console program for remotely controlling lights and appliances
+in the home or office.&nbsp;&nbsp; The complete source is made available under the free
+<a href="/heyu_license.html">Heyu License</a>.
+</p>
+
+<p>Heyu uses the <b>CM11A</b> computer interface to send and receive X10 control signals over the
+AC power lines to modules which can turn On, Off, or Dim attached lamps
+or appliances.&nbsp;&nbsp; It can store a schedule of timed events in the CM11A memory for execution
+when the computer is turned off or disconnected.</p>
+<p>
+Heyu supports an optional <b>W800RF32A</b>, <b>MR26A</b>, or <b>RFXCOM</b> RF receiver connected to a
+second port as an auxiliary input device for RF signals from X10 and other supported transmitters.</p>
+<p>
+Heyu can also use an optional <b>CM17A</b> interface to transmit X10 RF signals.
+</p>
+
+
+<h3 style="text-align: left;">Features</h3>
+
+<p>Highly configurable and able to transmit and receive any X10 signal
+supported by the CM11A.
+</p>
+
+<p>Monitor and/or log all X10 signals on the power line.
+</p>
+
+<p>Maintain a record of the state (On, Off, Dim level) of modules
+based on received or transmitted X10 signals.&nbsp;&nbsp; A variety
+of different lamp and appliance module types are supported as well
+as specialty modules like RCS-compatible thermostats and remote
+thermometers, and shutter motor controllers.</p>
+<p> 
+Decoders are included for RF signals received by a W800RF32A or 
+RFXCOM receiver from security remotes and sensors and from RFXSensor
+Temperature, Humidity, and Barometric Pressure sensors, and with a RFXCOM
+433.92 MHz receiver for RF signals from RFXMeter Power, Water, Gas, and Pulse
+sensors, Digimax thermostat, KaKu remotes, and Oregon Scientific, Electrisave, and
+Owl CM119 sensors.
+</p>
+
+<p>Execute scripts or commands based on received or transmitted X10
+powerline or RF signals and the recorded states of modules.
+</p>
+
+<p>Upload schedules of timed events and macros to the CM11A memory
+for operation without a computer.
+</p>
+
+<ul style="margin-left: 20px;">
+  <li>
+    <p>Events may be scheduled for execution at local clock times
+       or relative to the times of daily Dawn or Dusk.
+    </p>
+  </li>
+  <li>
+    <p>Schedules may be uploaded for the calendar year, or
+       alternatively for a period beginning on the current date and
+       extending a year into the future.
+    </p>
+  </li>
+  <li>
+    <p>Event dates and times are automatically adjusted for Leap Years
+       and periods of Standard and Daylight Time.
+    </p>
+  </li>
+</ul>
+
+<p>Control multiple CM11A interfaces connected to different serial ports
+on the same computer.
+</p>
+
+<p>With an optional CM17A device, transmit X10 RF signals to a transceiver
+for conversion to power line signals (possibly on a separate branch of the
+AC line), or to an X10 RF receiver connected to a different computer.&nbsp;&nbsp;
+Any of the 64K different RF signals supported by the CM17A may be transmitted.
+</p>
+
+
+<div style="margin-left: 0px; margin-right: 0px;"><b>Operating Systems</b>
+</div>
+<p>Heyu is developed and maintained under Linux.&nbsp;&nbsp; Compile options for
+Mac OS X (Darwin), FreeBSD, NetBSD, OpenBSD, SunOS/Solaris, SCO Unix, AIX, NextStep,
+and OSF have been implemented with the aid of the Heyu User Community.
+</p>
+
+<div style="margin-left: 0px; margin-right: 0px;"><b>Hardware</b>
+</div>
+
+<p>The <b>CM11A</b> is manufactured by <a href="http://www.x10.com">X-10 (USA) Inc</a>
+and sold as such and as part of their CK11A ActiveHome kit.&nbsp;&nbsp; It is also sold rebranded
+as the IBM <b>HD11</b> Home Director and the RCA <b>HC60CRX</b> Home Control Interface.
+It plugs into an AC socket and connects to the computer via an RS232 serial port.
+&nbsp;&nbsp;(A USB-Serial adapter can be used for computers which don't have an RS232
+port.)&nbsp;&nbsp; It has a clock with battery backup and a 1 KB non-volatile
+memory for stored timers and macros.&nbsp;&nbsp; Compatible 230 Volt devices are
+sold outside North America as various CM11x models; &nbsp; in the UK as the <b>CM12U</b>.  
+</p>
+
+<p>Heyu also supports the <b>CM10A</b>  (IBM <b>HD16</b>), an older device similar
+to the CM11A but without clock or battery backup, and marketed as an early version
+of the IBM Home Director.
+</p>
+
+<p>The <b>W800RF32A</b> RF receiver is manufactured by
+<a href="http://www.wgldesigns.com">WGL &amp; Associates</a>.&nbsp;&nbsp; This
+device can receive X10 RF signals from standard, entertainment, and
+security remotes and sensors.&nbsp;&nbsp; In addition to the US/Canada version,
+an international version, the <b>W800RF32AE</b>, is available which operates
+at the X10 RF frequency used in Europe and elsewhere.</p>
+
+<p>The <b>RFXCOM</b> X10 RF receiver from <a href="http://www.rfxcom.com">RFXCOM</a> is
+a USB device but incorporates an FTDI USB-Serial chipset and maps to a serial port.
+&nbsp;&nbsp; It can receive X10 RF signals from standard, entertainment, and security remotes
+and sensors, and is available in both 310 MHz US/Canada and 433.92 MHz International frequency
+versions.&nbsp;&nbsp; The International version can also receive signals from
+RFXMeter sensors, Digimax thermostats, and Oregon sensors.</p>
+
+<p>The X-10 <b>MR26A</b> receiver can receive X10 RF signals from standard and some
+entertainment remotes, but not security remotes or sensors.</p>
+
+<p>For users in North America, Heyu optionally integrates support for
+the X-10 <b>CM17A</b> "Firecracker", a small serial dongle which transmits X10 RF
+signals.&nbsp;&nbsp;&nbsp;(The CM11A and CM17A coexist on the same serial
+port - no additional port is required.)
+</p>
+
+<p>Heyu does NOT support the X-10 CP290 interface, the Smarthome
+PowerLinc 1132B interface, or any USB-only interface like the X-10 CM15A
+"ActiveHome Pro".
+</p>
+
+<div style="margin-left: 0px; margin-right: 0px;"><b>Support</b>
+</div>
+
+<p>Support for Heyu is provided via the
+<a href="http://groups.yahoo.com/group/heyu_users">heyu_users forum</a>
+at Yahoo groups. &nbsp;&nbsp;Heyu developers and members of the Heyu User Community
+receive and respond to Heyu questions, bug reports, and feature
+requests. &nbsp;&nbsp;New releases of Heyu will be announced there.
+</p>
+
+<p style="margin-bottom: 0in;"><br/>
+</p>
+
+</div>
+
+<div id="footer">
+   <ul id="pageauthors" style="margin-left: 20px;">
+     <li>Website Copyright 2005 Charles W. Sullivan</li>
+   </ul>
+
+   <div id="valid">
+      <ul>
+        <li><a href="http://validator.w3.org/check/referer">
+          <img alt="Valid XHTML 1.0!" src="/valid-xhtml10.asc"/></a>
+
+        <a href="http://jigsaw.w3.org/css-validator/check/referer">
+          <img alt="Valid CSS!" src="/vcss.asc"/></a></li>
+
+      </ul>
+
+   </div>
+</div>
+
+
+</body>
+</html>

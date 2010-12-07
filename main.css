@@ -1,0 +1,290 @@
+/* Pull in NN4 hidden styles */
+/* @import url( "non-nn4.css" ); */
+
+* {
+	/*-moz-outline: solid 2px red;*/
+}
+
+html, body {
+	height: 100%;
+	width: 100%;
+}
+
+body {
+	background-color: white;
+	color: black;
+	margin: 0;
+	padding: 0;
+
+	font-family: sans-serif;
+/*	font-size: 100%;*/
+
+	position: absolute;
+	top: 0;
+	bottom: 0;
+}
+
+acronym[title] {
+	cursor: help;
+}
+
+img {
+	border: 0;
+}
+
+a {
+        background-color: white;
+	color: /*#ffa500*/ blue;
+	text-decoration: none;
+}
+			
+a:hover {
+	text-decoration: underline;
+}
+	
+code {
+	font-size: 80%;
+}
+	
+ul {
+	margin: 0;
+	padding: 0;
+}
+	
+#sitenav {
+	margin: 0;
+	padding: 0;
+	border-bottom: 1px dotted black;
+}
+
+#sitenav ul {
+	list-style: none;
+	margin: 0 auto;
+	padding: 0;
+	width: 100%;
+	border: none;
+}
+			
+#sitenav li {
+        background-color: white;
+	color: black;
+	width: 20%;
+	text-align: center;
+	margin: 0;
+	padding: 0;
+}
+	
+#sitenav a {
+	display: block;
+	margin: 0 1px;
+}
+
+#sitenav a:hover {
+	text-decoration: none;
+	background-color: #ffa500;
+	color: white;
+}
+		
+#mainhead {
+	width: 100%;
+	border-bottom: 1px dotted black;
+	background-color: #90ddf9;  /* lightblue; */
+	color: black;
+	padding: 0;
+	text-align: left;
+	/* font-size: 150%; */
+	font-size: 120%;
+}
+
+#mainhead img {
+	vertical-align: middle;
+	margin: 0;
+	padding: 0;
+}
+
+		
+#sectionnav {
+	float: right;
+	width: 20%;
+	margin: 0;
+	padding: 0;
+	border: none;
+	background-color: white;
+	color: black;
+}
+
+#sectionnav h4 {
+	margin-bottom: 0;
+	padding: 1%;
+}
+
+#sectionnav ul {
+	list-style: none;
+	padding: 1em 1em 1em 0;
+	border-left: 1px solid black;
+	width: 80%;
+}
+
+#sectionnav a {
+	display: block;
+	padding: 0;
+	margin: 4px 0 4px 8px;
+	width: 95%;
+}
+
+#sectionnav a:hover {
+	background-color: #90ddf9 ; /* lightblue;*/ 
+	color: black;
+	text-decoration: none;
+}
+
+#main {
+	float: left;
+	width: 70%;
+	padding: 1%;
+	margin-left: 2%;
+	border-left: solid 1px black;
+	border-right: solid 1px black;
+	background: white;
+	color: black;
+
+	/* bit of a hack to ensure a minimum height of the main content area */
+	min-height: 80%;
+
+}
+
+#util {
+	float: left;
+	width: 70%;
+	padding: 1%;
+	margin-left: 2%;
+	border-left: solid 1px black;
+	border-right: solid 1px black;
+	background: white;
+	color: black;
+
+	/* bit of a hack to ensure a minimum height of the main content area */
+	min-height: 80%;
+
+}
+
+#footer {
+	clear: both;
+	font-size: 80%;
+	margin: 0;
+	border-top: 1px dotted black;
+}
+
+#pageauthors {
+	float: left;
+	width: 30%;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+#valid {
+	float: left;
+	width: 40%;
+	text-align: right;
+	margin: 0;
+	padding: 0;
+}
+
+#valid ul {
+        list-style: none;
+}
+
+.hack {
+	clear: both;
+	margin: 0;
+	padding: 0;
+	font-size: 1px;
+	line-height: 1px;
+	border: none;
+}
+
+dt {
+	font-size: 1.1em;
+	font-weight: bold;
+	padding-top: 0.1em;
+	/* padding-bottom: 0.1em; */
+	padding-left: 1em;
+	padding-right: 1em;
+	margin-top: 0.1em;
+	margin-bottom: 0.1em;
+	display: inline;
+	/* border-bottom: dotted 1px black; */
+}
+
+dd {
+	/* padding-top: 0.5em; */
+	padding-bottom: 1em;
+}
+
+.screenshot {
+	width: 85%;
+	margin-top: 1em;
+	margin-left: auto;
+	margin-right: auto;
+	clear: right;
+	text-align: left;
+
+	font-family: Verdana,Arial,Helvetica,sans-serif;
+/*	background-color: transparent;
+	color: black; */
+}
+
+.screenshot dl {
+	float: right;
+	text-align: left;
+	width: 60%;
+
+	font-family: Verdana,Arial,Helvetica,sans-serif;
+/*	background-color: transparent;
+	color: black; */
+}
+
+.screenshot img {
+	border: solid 1px black;
+	width: 120px;
+	height: 90px;
+}
+
+.horizontalList {
+	margin: 0 auto;
+	padding: 0;
+	width: 80%;
+}
+
+.horizontalList li {
+	display: inline;
+}
+
+#main ul {
+	padding-left: 1em;
+}
+
+li.complete {
+	color: /* #aaaaaa */ red;
+        background-color: white;
+}
+
+#sectionnav h5 {
+	margin: 0;
+	padding: 0 0 0 1em;
+}
+#sectionnav li ul {
+	border-left: none;
+	margin: 0;
+	padding: 0 0 0 1em;
+}
+
+.disabled {
+	text-decoration: line-through;
+}
+
+.pic {
+	float: right;
+	padding: 0 0 1em 1em;
+}

@@ -1,0 +1,132 @@
+
+EFFECT OF PHASE ON THE RESPONSE OF X10 DIMMER MODULES AND ON THE DIM
+STEPS REPORTED BY A CM11A INTERFACE:  A study which resolves several
+issues with dims and microdims, their effects on various X10 dimmer
+modules, and discrepancies reported by a CM11A which receives these
+functions over the power line.
+
+           by Charles W. Sullivan
+
+(Originally posted to Usenet newsgroup comp.home.automation on
+29 Dec 2005.  Revised 21 July 2007.)
+
+INITIAL OBSERVATIONS
+--------------------
+The number of dim steps reported by a CM11A when a dim (or bright)
+function is received over the power line has what at first appears to
+be a random component.  The steps for dims sent by most X10
+transmitters - CM11A, TM751, RR501, Mini-or Maxi-Controller (although
+not CM15A) - and reported by a CM11A can be fitted to the formula:
+
+  Dim steps = (11 * N) + X
+
+where N >= 0 and X is either 2 or 3 (rarely 4) with approximately equal
+frequency.  The CM11A is limited to reporting a maximum of 210 steps.
+
+With a CM11A as the transmitter, N is the programmed dim_level (1-22)
+minus 1.  With the other transmitters, N depends on how long the "dim"
+button is pressed but the same formula holds true.
+
+Two CM11A units plugged into the same power strip always report the same
+value of X.  But two CM11A units plugged into receptacles on different
+phases (+/-120 to neutral) of the AC power line always report opposite
+values for X; if one report 2, the other reports 3, and vice-versa.
+
+X10 control signals are transmitted over AC power lines by sending 
+an encode sequence of short bursts of 120 KHz at the zero crossings of
+successive half-cycles of the AC waveform.  The above observations lead
+to the hypothesis that the reported value of X is determined by whether
+the dim power line code is received beginning with the rising or falling
+zero crossing.
+
+TEST SETUP
+----------
+To test this hypothesis, a CM11A test setup was rigged to always
+transmit the dim signal beginning on the zero crossing at the same
+half cycle.
+
+The secondary of a 9 Volt AC transformer (wall wart) was connected from
+Signal Ground to the Carrier Detect (CD) pin of the serial port to which
+a CM11A is connected. (The CD line is not connected in a standard CM11A
+serial cable.)
+
+Software (Heyu) was modified:  After sending the dim function code,
+e.g., "0xE0 0x64", and receiving the checksum from the CM11A, the final
+0x00 "send-it" byte is deferred until a few milliseconds after the CD
+line becomes inactive.  With the 9V transformer secondary in phase with
+the AC power line, the dim signal transmission should then start on the
+rising zero crossing.
+
+This test setup successfully removes the apparent randomness in X.  A
+receiving CM11A on the same AC phase as the triggered sender now always
+reports X as "3" in the above mentioned formula.  If the phase is
+reversed by plugging the wall wart transformer upside-down in the plug
+strip, X is always reported as "2".
+
+Note: The enhancement to Heyu to allow triggering on the zero crossing
+for a specific half-cycle has been implemented in the standard Heyu
+distribution with the -tr and -tf command line switches.  These are
+described in the EXPERIMENTAL STUFF section of man page heyu(1).
+
+EFFECT ON STANDARD X10 DIMMER MODULES
+-------------------------------------
+(Note: A major redesign by X-10 of the LM465 hardware and firmware
+occurred around the beginning of 2007, however the part number remains
+the same. The redesigned units now share many of the features of the
+LM14A 2-way Lamp Dimmer although they remain only 1-way, i.e.,
+receive only.  What follows applies only to the older LM465 models.)
+
+It has previously been observed by myself and others (Dave Houston for
+one) that when transmitting microdims (i.e., programmed dim_level 1) to
+a standard X10 Lamp Module, e.g. LM465, that about 150 microdims are
+required to span the range from full brighness to fully dimmed.  The
+question arises how this number relates to the supposed 210 brightness
+steps in the module.
+
+Microdims were sent in a loop using the above test setup with a 3 second
+delay between transmissions.  The voltage across a 100 Watt lamp
+connected to a lamp module was measured with a Fluke 77 multimeter,
+which is specified as measuring "true RMS".
+
+With the in-phase trigger (CM11A reports 3), the number of microdims
+required for full dimming of a LM465 was 223 or 224.  With the
+out-of-phase trigger (CM11A reports 2), the number was 112 or 113.
+Similarly to the LM465, the same results were obtained with a 1980's
+vintage X10 dimmer (with thumbwheel housecode/unit switches on the
+sides) and with a Radio Shack branded module from about 1997.
+
+These results suggest that the CM11A correctly reports the out-of-phase
+microdims as two steps, but mis-reports the in-phase microdims as three
+steps instead of only one step.  They also show that the number of
+brightness steps in a standard X10 lamp module is actually about 223 or
+224 rather than the supposed 210.  (The only official X10 document I
+know of which mentions the number of module brightness levels is the
+CM11A protocol.  I suspect that number came only from the 210 step
+reporting limit of the CM11A.)
+
+With 150 untriggered microdims, one would expect on average about 75
+in-phase single steps and 75 out-of-phase double steps for a total of
+225 steps.  So these results are consistant with previous observations.
+
+EFFECT ON X10 LM14A MODULES
+---------------------------
+The effect of phase on a LM14A 2-way module was measured by sending an
+extended status request after each dim transmission and recording the
+resulting extended preset level (1-62) reported by the module.
+
+Sending _contiguous_ triggered dims via programmed dim_level 1-22 after
+an extended preset dim 63 command yields two very different curves of
+extended level versus reported steps.  Both are approximately linear.
+The out-of-phase curve reaches extended level 1 at a programmed
+dim_level 15 (CM11A reports 156 steps). But the in-phase curve is still
+at extended level 7 at that dim_level and doesn't reach extended level
+1 until dim_level 17 (CM11A reports 179 steps).
+
+Curiously, unlike the LM465, the in-phase and out-of-phase LM14A curves
+for sequences of microdims are point-for-point identical, reaching
+extended level 1 after 154 transmissions.  The number of microdim
+transmissions required for a change of 1 extended level alternates
+between 2 and 3 along the curve.
+
+Charles W. Sullivan
+Greensboro, NC

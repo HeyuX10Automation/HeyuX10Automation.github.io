@@ -1,0 +1,38 @@
+CM11A Reliablity issues
+
+Source: Dave Houston, posted to Usenet newsgroup comp.home.automation
+on 3 Dec 1999 and reproduced here with permission.
+
+There are four types of lockups. Two can be easily induced, another is
+fairly easy to induce, and one is fairly infrequent but is the hardest
+to cure.
+
+1. This one can be induced by using another transmitter to send an old
+style extended code without any following extended data. This will lock
+up all CM11As 100% of the time. It can be cleared by using the other
+transmitter to put any command on the power line.
+
+2. This one occurs when an older CM11A (older than about 24 months -
+with firmware 7 as returned by the Status request detailed in the CM11A
+protocol documentation) and a two-way module such as the LM14A are
+powered up simultaneously (e.g. after a power outage). This also will
+lock up the older CM11As 100% of the time. It can also be cleared by
+using another transmitter to put any command on the power line.
+
+3. A third type occurs when the RS-232 cable is disconnected from the
+PC but not from the CM11A. This frequently, but not always, causes
+lockups and other weird behaviors. The lockups can usually be cleared
+in the same manner as above. This is probably the most frequent cause
+but it was the last to be identified and documented.
+
+4. A fourth type is fairly infrequent and seems to be related to a
+dangling RS-232 cable and/or brownouts. It cannot be cleared in any
+manner other than removing the CM11A from the power line, removing the
+batteries and waiting a lengthy period. In most case 45 minutes is
+adequate but, in some cases, it takes longer.
+
+All are totally independent of the software used. None have ever been
+acknowledged by X-10 but we've come to expect silence from X-10.
+
+ 
+
