@@ -1,0 +1,98 @@
+commit b23f63f5ffce3d9d7f0e1822084cd2fe2f8b9b69
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Sat Feb 26 10:30:25 2011 +0100
+
+    Heyu 2.9.3
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 93c0520707ef763589d53a6cdce7ada0fc35353f
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Sun Feb 6 15:15:18 2011 +0100
+
+    Fix dimlevel percentage calculation bug
+    
+    The bug affected Heyu 'dimlevel', 'memlevel' and 'heyu_state' state
+    commands output in case of appliance modules (ie. those not supporting
+    any brightness manipulation signals) which were not considered standard
+    X10 modules, having native full brightness level different from standard
+    X10 level of 210.
+    
+    Since Heyu 'show dimlevels' administrative command algorithm was
+    returning correct percentage values even for those non-standard
+    appliance modules, simply reusing its calculation method while
+    processing state commands should fix the problem.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 716ffb58870bf271ea5496bd98e98d30c74d0167
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Wed Dec 15 17:11:34 2010 +0100
+
+    Stop using select() as a *sleep() replacement on linux
+    
+    It has been prooved that using select() as a replacement for a *sleep()
+    while looping through the spool file monitoring functions c_engine() and
+    c_monitor(), may cause a not yet clearly understood problem to occure
+    when running on a relatively recent GNU/Linux platform, like Fedora 13.
+    
+    Don't define HASSELECT for linux any more.
+    
+    Created and tested against heyu-2.9.2.
+    
+    Reported-by: ccataldo@cox.net
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit c0246a13c4cc9b0ff110c3adab0408006c853800
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Thu Dec 2 15:27:23 2010 +0100
+
+    Fix sensorfault reported inactivity bit
+    
+    With post-2.8.0 changes, the sensorfail state command started giving
+    results about sensors inactivity that seem not what one could expect.
+    Fix it in a way that only sensors which follow the hearbeat concept
+    are taken into account. Use stored individual sensor inactivity state
+    bits, updated once a second, instead of recalculating it all again
+    from timestamps.
+    
+    Applies on top of patch 1/2, 'Fix sensorfault tamper bit'.
+    
+    Reported-by: Karl Pielorz <kpielorz_lst@tdx.co.uk>
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 4889dbd96905927a4e74bcf01528fa24268029ae
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Thu Dec 2 17:02:53 2010 +0100
+
+    Fix sensorfault reported tamper bit
+    
+    The Heyu 'sensorfault' state command recalculates its tamper output bit
+    from individual sensor's tamper state flags. Use the already maintained
+    global tamper state flag for this instead. NB this changed behaviour is
+    consistent with what the Heyu 'armedstate' state command returns, as
+    well as with the Heyu launch conditions 'tamper' global flag and the
+    '$X10_Tamper' environment variable which the Heyu engine launched
+    scripts are provided with.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 1e540cb3143a25940a184a1e6260c320d0ff5f36
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Wed Dec 1 20:27:59 2010 +0100
+
+    No need to read x10state file from ore_emu
+    
+    Since the Heyu ore_emu command has been classified as a state command on
+    its initial creation, it follows a standard pattern of a state command,
+    starting from reading the Heyu x10state file. However, unlike regular
+    state commands, it makes no use of the state data read in, only appends
+    a synthesized signal to the Heyu spool file, which is then processed
+    and reported by the Heyu engine. Thus, reading the x10state file can
+    be omited, hopefully giving no nasty side effects.
+    
+    OTOH, this change should prevent the ore_emu command from failing
+    occasionally with an "Unable to read state file." error message.
+    
+    Reported-by: John O'Hare <itaide@googlemail.com>
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
