@@ -1,0 +1,10 @@
+If anyone is trying to use the patched copy of xtend-1.2beta4 on the
+heyu web site, you've probably run into the cpu loop problem.  I used
+to kill xtend every hour or two (via script).  I finally straced out
+the problem.  The following patch applied to the util.c file (in the
+patched copy of xtend-1.2beta4 at the heyu web site) has worked
+flawlessly and run continuously for a couple of weeks without a single
+cpu loop.
+
+
+Contributed by mmoneta@optonline.net

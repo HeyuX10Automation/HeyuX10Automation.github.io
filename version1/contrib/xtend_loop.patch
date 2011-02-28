@@ -1,0 +1,94 @@
+If anyone is trying to use the patched copy of xtend-1.2beta4 on the
+heyu web site, you've probably run into the cpu loop problem.  I used
+to kill xtend every hour or two (via script).  I finally straced out
+the problem.  The following patch applied to the util.c file (in the
+patched copy of xtend-1.2beta4 at the heyu web site) has worked
+flawlessly and run continuously for a couple of weeks without a single
+cpu loop.
+
+--- xtend-1.2beta4.local/util.c 2000-05-27 17:17:21.000000000 -0400
++++ mace-xtend-patch/util.c 2003-04-11 21:57:54.000000000 -0400
+@@ -80,8 +80,12 @@
+void
+getbytes (int fd, char *buf, int count)
+{
++  fd_set zero;
++  struct timeval timeout;
+   ssize_t bytes = 0, index = 0;
+
++  FD_ZERO (&zero);
++
+   if (verbose > 8)
+     printf ("Getting a message of %d (0x%X) bytes\n", count, count);
+
+@@ -90,6 +94,24 @@
+     {
+       bytes = read (fd, &buf[index], count - index);
+       index += bytes;
++
++      /* this is arguably foolish, but how else can one
++         handle receiving an EOF continually?
++         It only happens when using a heyu file (of course),
++         and actually is how 'tail(1)' handles the same thing. */
++
++      timeout.tv_sec = HEYU_TIMEOUT;
++      timeout.tv_usec = 100000;
++
++      if (bytes == 0 && select (0, &zero, &zero, &zero, &timeout) == -1)
++ {
++   if (errno == EINTR)
++     return;
++
++   fprintf (stderr, "select-timeout: %s\n", strerror (errno));
++   exit (-1);
++ }
++
+     }
+   alarm(0);
+}
+@@ -141,7 +163,7 @@
+          and actually is how 'tail(1)' handles the same thing. */
+
+       timeout.tv_sec = HEYU_TIMEOUT;
+-      timeout.tv_usec = 0;
++      timeout.tv_usec = 100000;
+
+       if (bytes == 0 && select (0, &zero, &zero, &zero, &timeout) == -1)
+{
+@@ -196,13 +218,35 @@
+int
+getmessage (int fd, char *buf)
+{
++  fd_set zero;
++  struct timeval timeout;
+   int bytes = 0;
+   char count;
+
++  FD_ZERO (&zero);
++
+   /* get the number of bytes we need to pull in */
+   while (bytes == 0)
+     {
+       alarm(3);
++
++      /* this is arguably foolish, but how else can one
++         handle receiving an EOF continually?
++         It only happens when using a heyu file (of course),
++         and actually is how 'tail(1)' handles the same thing. */
++
++      timeout.tv_sec = HEYU_TIMEOUT;
++      timeout.tv_usec = 100000;
++
++      if (bytes == 0 && select (0, &zero, &zero, &zero, &timeout) == -1)
++ {
++   if (errno == EINTR)
++     return 0;
++
++   fprintf (stderr, "select-timeout: %s\n", strerror (errno));
++   exit (-1);
++ }
++
+       bytes = read (fd, &count, 1);
+       alarm(1);
+     }
+

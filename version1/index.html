@@ -1,0 +1,248 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="description" 
+content="Gadget lover's page, featuring a program (heyu) to operate the X10 cm11a interface from a Linux system."/>
+<meta name="keywords" content="X10, cm11, cm11a, Linux, unix, home automation, remote control, cp290, Daniel Suthers, Daniel B. Suthers, heyou, heyu"/>
+
+<meta http-equiv="keywords" content="X10, cm11, cm11a, Linux, unix, home automation, remote control, cp290, suthers, heyu"/>
+<title>Heyu Home page </title>
+<link rel="stylesheet" href="/rounded.css" type="text/css"/>
+</head>
+<body bgcolor="#FADEB5" >
+
+<center>
+<h1>HEYU!<br/>X10 control for Linux.<br/></h1><h2>Version 1<br/>
+Created by Daniel B. Suthers<br/></h2>
+</center>
+Web page last updated 
+Tue Dec 16 20:58:49 PST 2003
+
+<hr/>
+<div class=rounded>
+<p>
+I present this free software for your use.  It will compile on many Unix
+and Linux systems.  The full source is available here.  An executable copy of the program can be downloaded too.
+You may use this software as your needs dictate, just don't sell it to
+others or represent it as your own work.  If you want to use it as part
+of a commercial distribution, contact me for permission.
+</p>
+<p>
+I am your typical gadget freak.  I enjoy all sorts of gadgets, from
+simple toys like the Etch-A-Sketch to complex things like my K6 (and Athlon) powered Linux
+computers.
+Any old gadget will do.  I drove an RX7 because it had the most unique
+engine (a rotary, for those that don't know already).  Now I drive a 
+Prius Hybrid gas/electric car.
+</p>
+<p>
+One of the gadgets I like is the CM11A.  I created HEYU because there
+was nothing available to control my CM11A from within Linux.  I prefer
+not to use Windows when I can avoid it.  There are now several programs that
+can communicate with the CM11A from linux.  See the links below.
+</p>
+<center> <b>I am not affiliated with the X10 corporation.</b> </center>
+</div>
+<hr/>
+<center>
+<font size="+2">
+HEYU software for CM11A Home Automation<br/>
+</font>
+</center>
+
+<p>
+The CM11A is a device
+built by the <a href="http://www.x10.com/">X10 company</a>
+for controlling devices by sending signals through the
+power lines.  It's a small box that plugs into an AC outlet and connects to
+a serial port.  The CM11A is shipped with a Windows application called "Activehome".
+</p>
+<p>
+I have put together a Linux program that will operate the CM11A computer interface.
+It will control your X10 devices, set the cm11a interface clock and
+monitor x10 signals on the AC power lines.  It will upload macros and timers to your CM11A for stand-alone execution.  It is tailored to Linux, but
+it should work with other unix systems.  The <a href="README.html">readme file</a> has a bit more information about the program.
+I highly recommend reading the <a href="heyufaq.txt">FAQ</a> if you are at all interested in it.
+</p>
+
+<p>The program has been written per the protocol.txt documentation from 
+<a href="http://www.x10-beta.com/ActiveHome/"> X10's beta web site</a>.
+You may need to use <a href="ftp://ftp.x10.com/pub"> X10's ftp site</a> to get the docs.
+I have updated that document with my own notes and discoveries.
+A link to my updated version is below. 
+It's also included in the sources tar file.
+</p>
+
+
+<p>Many people have had problems downloading the source file via Netscape.  
+The easiest way is to right click, then choose 'Save this link as..."<br/>
+<br/>
+Current stable (and final version 1) release = <a href="x10_heyu.tgz">1.35_3</a>
+<!-- Current beta 1.X version = <a href=beta>1.34beta7</a><br/> -->
+<br/>
+</p>
+<p>
+<b>There will be no more enhancements to Version 1. It is capped at heyu 1.35</b>.
+Future enhancements for HEYU will be to Heyu Version 2, currently being maintained
+by Charles Sullivan.  Heyu 2 uses a different
+way of looking at the CM11 time (always on standard time) and will not try to
+remain backwardly compatible in it's configuration file locations, output or command structure.
+<b>Go to <a href=../>Heyu Version 2</a> pages</b>
+</p>
+<p>
+Version 1.3X has a few changes from 1.29.  Most notable are the addition
+of dusk and dawn timers (via the auxiliary program <i>makesched</i>),
+a configure script and a install script that checks for permission
+problems.  An overrun condition with the macros was also fixed.
+The overrun sometimes caused extra macros to run after a macro
+ was triggered.
+<i> Version 1.35_3 has some installation script fixes</i>.
+</p>
+<p>
+The 1.35 version supports multiple CM11s.  It has code to change the CM11
+clock when the DST flag changes.  It does not eat up processor time when
+the CM11 is disconnected.  The monitor output is a little easier to read
+from a script.  It provides some of the functionality of <i>xtend</i>
+by calling a configurable external helper program each time a powerline
+event is detected.
+</p>
+<p>
+  Note that allowing multiple CM11s required a change of the the spool file name, so xtend users will have to change their config files.
+</p>
+<p>
+Please note that <b>xtend 1.1</b> does not work
+with HEYU 1.28i1 or higher unless you apply the <a
+href="beta/xtend-1.2beta4.patch">xtend patch</a> to against <a
+href="ftp://ftp.jabberwocky.com/pub/xtend/">xtend-1.2beta4</a>.
+I have  posted a <a href="beta/xtend-1.2beta4.local.tgz">patched copy of
+xtend-1.2beta4</a> with permission from David Shaw.  Please read this
+specialized <a href="xtend_faq.txt">xtend+heyu faq</a> if you have any
+questions about using xtend with heyu.
+</p>
+<br/>
+View the:
+<ul>
+<li><a href="history.txt">Change History</a> (text file).</li>
+<li><a href="heyufaq.txt">FAQ</a> (5K text), 
+ a list of Frequently Asked Questions about HEYU (last updated 07/19/2003)</li>
+<li><a href="heyu_openBSD_faq.txt">OpenBSD with Heyu FAQ</a> (5K text), a list of Frequently
+Asked Questions about using openbsd (and freebsd) with HEYU  (last updated 07/19/2003 )</li>
+<li><a href="protocol.txt" >protocol description</a> (28K text) , a <em>locally corrected</em> copy of X10's description of the cm11 communications protocol.</li>
+<!-- <li><a href="beta">beta directory</a> with source to the 1.3 beta. -->
+<li><a href="contrib">contributions directory</a> with utilities contributed by other heyu users.</li>
+<li><a href="1.33patches">patches directory</a> with patches that can be applied against the 1.33 source. Contributed by other heyu users.</li>
+
+</ul>
+<p>
+Download the HEYU source in one of two formats.  The PKzip compatible version was requested by many DOS users so they could use the code as a reference.
+</p>
+<ul>
+<li> <a href="x10_heyu.tgz">76K tarred then gzipped</a> </li>
+<li> <a href="x10_heyu.zip">98K zipped for pkzip</a> </li>
+</ul>
+Miscellaneous downloads:
+<ul>
+<li> <a href="heyu.gz" >HEYU glibc binary</a> (50K Linux gzipped executable)</li>
+<li> <a href="x10config" >Sample .x10config file</a> (1 K text)</li>
+</ul>
+
+
+
+
+
+
+<hr/>
+<font size="+2">
+Other links<br/>
+</font>
+<p>
+There is a mailing list for Heyu users at <a href="http://groups.yahoo.com/group/heyu_users"> http://groups.yahoo.com/group/heyu_users.</a>  This is where I will be
+announcing changes and upgrades.  It should also be a place for Heyu
+users to communicate with each other.
+</p>
+<p>Do you prefer a graphical interface over a command line?  Look at <a href="http://www.houseofhack.com/tkx10/"> TKx10 </a> for a Perl/TK  implementation of a graphical front end by haig@houseofhack.com.  The perl package mentioned at his site is Tk800.022.tar.gz
+</p>
+<p>
+Do you want to access your X10 via the web?  Bluelava does a nice job.  It's
+a perl CGI script that works nicely.  The home page is at <a href="http://www.sgtwilko.f9.co.uk/bluelava/"> http://http://www.sgtwilko.f9.co.uk/bluelava/</a>
+</p>
+<p>
+Another new web based control is DRACONi Automation.  It's designed to be 
+a freeware (GPL) home automation and digital entertainment control package.
+For more information go to <a href="http://www.draconidigital.com/draconiautomation/">www.draconidigital.com</a>.
+</p>
+<p>
+Do you want to trigger a program when HEYU reports a specific code?  Try David Shaw's Xtend software. It will respond to incomimg X10 signals by running any unix command you want.  It's at the <a href="http://www.jabberwocky.com/software/xtend/">Xtend Home page</a>.
+</p>
+<p>
+Neil Cherry's <a href="http://www.linuxha.com/"> Linux Home Automation Page</a> has a
+lot of links to many good home automation sites.  He also mirrors
+a lot of the Linux software that's available.
+</p>
+<p>
+Home-Automation.org is hoping to become the ultimate site for home automation.  Their URL is <a href="http://home-automation.org">http://home-automation.org</a>
+</p>
+<p>My program is based on the program called "x10" by
+Larry Campbell as modified by Paul Fox for Linux.  His <a href="http://www.foxharp.boston.ma.us">home page</a> has a link to his program.
+
+The original X10 program <a href="ftp://ftp.foxharp.boston.ma.us/pub/pgf/index-1.html#ss1.3">
+(download  CP290 version from here)</a> only works with the cp290 interface.  
+</p>
+
+
+
+
+<hr/>
+
+<font size="+2">
+Compatibility<br/>
+</font>
+
+The program will work with:
+<ul>
+<li>The CM11A and CM12A made by the X10 corporation.
+The "Activehome" package (CK11) includes the CM11A.</li>
+<li>The CM10 if you run the CM10 macro init program (from the <a href="contrib"> contribs directory</a>) after every power failure.</li>
+<li>The Home Director package marketed by IBM.</li>
+<li>The Home Control package marketed by Radio Shack (model 61-2417).</li>
+<li>Options are included to compile on Linux, Solaris, SysV, Freebsd, OSF1 v4.0 and nextstep 3.3.  I'll be adding the changes for SCO and NetBSD soon.</li>
+</ul>
+It will not work with:
+<ul>
+<li> CK17  Firecracker (computer controlled RF transmitter)</li>
+<li> CP290 (older style computer - X10 interface)</li>
+<li> CP10 - A power strip with X10 built in ???</li>
+<li> Extend 1.1 (look for newer than 1.2beta4)</li>
+</ul>
+
+
+
+
+<hr/>
+There is a mailing list for Heyu users at <a href="http://groups.yahoo.com/group/heyu_users"> http://groups.yahoo.com/group/heyu_users </a>
+<br/>
+
+<!--
+You can send me mail at
+<em><a href="mailto:dbs@tanj.com?subject=Heyu User">
+dbs@tanj.com
+</a></em><br/>
+
+I guess I shouldn't forget a link to <a href="http://www.tanj.com/">my own home page</a>.
+-->
+<p>
+
+<!--
+<a href="reminder.html"> Just a comment reminder.</a></p>
+!-->
+<a href="http://validator.w3.org/check?uri=referer"><img
+          src="http://www.w3.org/Icons/valid-xhtml11"
+          alt="Valid XHTML 1.1!" height="31" width="88" /></a>
+</p>
+</p>
+</body>
+</html>

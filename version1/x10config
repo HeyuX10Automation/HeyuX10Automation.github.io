@@ -1,0 +1,43 @@
+# This file is used to tell HEYU where your CM11A is plugged in, what the
+# default house code is, to set some variables and to define aliases for
+# your X10 modules.  This file should reside in $HOME/.x10config
+# See the man page x10config(5) for the file layout.
+#
+# this file should contain x10 appliance aliases, one per line, as:
+#   appliance-name  housecode  modulenumber
+# for example:
+#  mydesklamp	A	4
+#  atticfan	B	3
+#
+# In addition, the devicename for the line the Powerhouse is attached to must
+# be specified.  An example is:
+#  TTY	/dev/ttyS0
+# and the default housecode with:
+#  HOUSECODE	A
+#
+# Sample aliases
+frontleft	A 1
+frontright	A 2
+backleft	A 3
+backright	A 4
+allwater	A 1-4
+water		A 1-4
+#
+email_arrived	A 5
+monitor		A 6
+batteries	A 7
+high_thermostat	A 8
+#
+# set default housecode -- the one the switches will use
+HOUSECODE	A
+#
+# Set the port the program will use.
+TTY		/dev/ttyS3
+# The NEWFORMAT directive allows version 1.28 and higher to display more
+# informative messages.
+NEWFORMAT
+#
+# The file listed with MACROXREF is where HEYU will store the addresses
+# where macros are loaded in the CM11A.  If you don't use this directive,
+# The macros addresses will not be cross-referenced.
+MACROXREF       .x10macroxref

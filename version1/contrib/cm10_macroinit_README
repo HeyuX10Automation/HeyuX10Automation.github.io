@@ -1,0 +1,22 @@
+
+This program is used only with the CM10A module.  The CM10A is like the
+CM11A except for the fact that it has no eeprom (memory) nor any batteries.
+The CM10A is was mostly sold with the original IBM Home Director packages.
+
+It does have a very small macro capability, providing 42 bytes of storage.
+This memory is cleared every time it's unplugged from the wall.
+
+The reason the CM10A does not work with HEYU is that the CM10A requires
+that it's macros be set when it's first powered on.  Unfortunately, it
+starts up sending the byte 0xa5 every second, just like the CM11A does.
+
+This program simply creates the proper byte stream to initialize the macro
+memory to zeros.  See section 5.3 in the protocol.txt document for the
+byte ordering in the data stream.
+
+Use:  start by compiling the program, then run the program with the
+output redirected to the CM10A's serial port.
+
+Example.
+gcc -o cm10_macroinit cm10_macroinit.c
+cm10_macroinit > /dev/ttyS0

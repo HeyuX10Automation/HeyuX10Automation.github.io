@@ -1,0 +1,210 @@
+From wiz@danbala.ifoer.tuwien.ac.at Tue Jul  2 07:11:11 2002
+Date: Tue, 2 Jul 2002 16:10:31 +0200
+From: Thomas Klausner <wiz@danbala.ifoer.tuwien.ac.at>
+To: dbs@tanj.com
+Subject: heyu-1.33 + NetBSD
+
+
+--so9zsI5B81VjUb/o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Hi!
+
+I just updated the NetBSD package (see
+http://www.netbsd.org/packages/misc/heyu/README.html for a slightly
+outdated description) to 1.33.
+
+Attached are the current patches we have in pkgsrc for heyu -- could
+you please consider integrating them, or in some cases (like the
+Configure patch) making it easier settable?
+
+You might want to skip patch-ag, but I find it useful to have an
+example config file in a known place (which is
+${PREFIX}/share/example/${PKGNAME} in pkgsrc).
+
+If you have any questions about any of the patches, don't hesitate to
+ask.
+
+Thanks,
+ Thomas
+
+-- 
+Thomas Klausner - wiz@danbala.tuwien.ac.at
+Intolerance is the last defense of the insecure.
+
+--so9zsI5B81VjUb/o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename=patch-aa
+
+patch-aa,v 1.2 2002/07/02 14:03:51 wiz Exp
+
+--- stop.c.orig	Thu Dec  7 06:42:20 2000
++++ stop.c
+@@ -33,9 +33,11 @@
+ char *argv[];
+ {
+     unsigned long pid;
++#ifdef __linux__
+     FILE * pidfile;
+     char buf[80];
+     char procname[80];
++#endif
+     extern unsigned long lockpid();
+     extern void quit();
+ 
+
+--so9zsI5B81VjUb/o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename=patch-ab
+
+$NetBSD: patch-ab,v 1.2 2002/07/02 14:03:51 wiz Exp $
+
+--- heyu.1.orig	Sun May 28 20:26:25 2000
++++ heyu.1
+@@ -242,7 +242,7 @@
+ .br
+  .x10sched.conf - CM11A schedule information for timers and macros.
+ .br
+- /var/lock/LCK..heyu.mon - lock file for monitor process
++ /var/spool/lock/LCK..heyu.mon - lock file for monitor process
+ .br
+  /var/tmp/heyu.out - fifo file for relay process
+ .br
+
+--so9zsI5B81VjUb/o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename=patch-ac
+
+$NetBSD: patch-ac,v 1.2 2002/07/02 14:03:52 wiz Exp $
+
+--- tty.c.orig	Sat Feb 10 21:45:49 2001
++++ tty.c
+@@ -92,7 +92,12 @@
+ #endif
+ struct termio oldsb, newsb;
+ #else
++#ifdef NETBSD
++  #include <sys/termios.h>
++  #define NCC NCCS
++#else
+ #include <termios.h>
++#endif
+ struct termios oldsb, newsb;
+ #endif
+ 
+
+--so9zsI5B81VjUb/o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename=patch-ad
+
+$NetBSD: patch-ad,v 1.2 2002/07/02 14:03:52 wiz Exp $
+
+--- xread.c.orig	Wed Apr 11 06:49:48 2001
++++ xread.c
+@@ -28,7 +28,7 @@
+ #include <stdio.h>
+ #include <signal.h>
+ #include <setjmp.h>
+-#if	(defined(SCO) || defined (SOLARIS))
++#if	(defined(SCO) || defined (SOLARIS) || defined(NETBSD))
+ #include <errno.h>
+ #else
+ #include <sys/errno.h>
+@@ -36,7 +36,7 @@
+ #include <syslog.h>
+ #include <unistd.h>
+ #include "x10.h"
+-#if (defined(LINUX) || defined(SOLARIS) || defined(FREEBSD))
++#if (defined(LINUX) || defined(SOLARIS) || defined(FREEBSD) || defined(NETBSD))
+ #include <string.h>    /* char *strerror(); */
+ #endif
+  
+@@ -128,7 +128,7 @@
+ 	       if( (i < 0) && (i_am_relay != 1) )
+ 	       {
+ 	           syslog(LOG_ERR,"Xread read error");
+-	           syslog(LOG_ERR, strerror(errno));
++	           syslog(LOG_ERR, "%s", strerror(errno));
+ 	       }
+ 	    (void) alarm(0);
+ 	    (void) signal(SIGALRM, SIG_IGN);
+
+--so9zsI5B81VjUb/o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename=patch-ae
+
+$NetBSD: patch-ae,v 1.1 2002/07/02 14:03:53 wiz Exp $
+
+--- Configure.orig	Mon Apr 16 07:24:14 2001
++++ Configure
+@@ -15,9 +15,9 @@
+ 
+ # paths:
+ cat >> Makefile <<EoF
+-BIN = /usr/local/bin
+-MAN = /usr/local/man/man1
+-MAN5 = /usr/local/man/man5
++BIN = ${PREFIX}/bin
++MAN = ${PREFIX}/man/man1
++MAN5 = ${PREFIX}/man/man5
+ GROUP = sys
+ OWNER = bin
+ 
+@@ -111,7 +111,7 @@
+ 	;;
+     netbsd)
+ 	cat >> Makefile <<-EoF
+-		DFLAGS = -DPOSIX -DLOCKDIR=\"/var/spool/lock\"
++		DFLAGS = -DPOSIX -DLOCKDIR=\"/var/spool/lock\" -DNETBSD
+ 		CC = gcc
+ 		CFLAGS = -g -O \$(DFLAGS) -Wall
+ 		LIBS = -lm -lc
+
+--so9zsI5B81VjUb/o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename=patch-af
+
+$NetBSD: patch-af,v 1.1 2002/07/02 14:03:54 wiz Exp $
+
+--- xwrite.c.orig	Wed Apr 11 06:46:26 2001
++++ xwrite.c
+@@ -47,7 +47,7 @@
+ #    endif
+ #endif
+ 
+-#ifdef OSF
++#if (defined(OSF) || defined(NETBSD))
+ #include <sys/ioctl.h>
+ #endif
+ 
+
+--so9zsI5B81VjUb/o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename=patch-ag
+
+$NetBSD: patch-ag,v 1.1 2002/07/02 14:03:54 wiz Exp $
+
+--- install.sh.orig	Sat Jan 27 22:55:57 2001
++++ install.sh
+@@ -28,7 +28,7 @@
+     while : ; do
+ 	echo "Where would you like the sample X10 configuration installed?"
+ 	echo "The default is $HOME/.x10config"
+-	read WHERE
++	WHERE=${PREFIX}/share/examples/heyu/x10config
+ 	if [ "$WHERE" = "" ]  ; then
+ 	    FOUND=$HOME/.x10config
+ 	    break
+@@ -56,7 +56,7 @@
+ 		    ;;
+ 	    esac
+ 	    echo "To which port is the CM11 attached?"
+-	    read WHERE
++	    WHERE=/dev/tty01
+ 	    if [ "$WHERE" != "" ]  ; then
+ 		if [ -e $WHERE ] ; then
+ 		    TTY=$WHERE
+
+--so9zsI5B81VjUb/o--
+

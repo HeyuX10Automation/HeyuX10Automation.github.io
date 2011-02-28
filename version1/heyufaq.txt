@@ -1,0 +1,285 @@
+                                  Heyu Faq
+                        (Frequently Asked Questions)
+                           Last updated 07/19/2003
+
+This FAQ applies to the last release (1.35) of version 1 of heyu .
+A new version (heyu2) is now being developed to provide new features
+that would not be backwardly compatible with the original heyu.
+
+1) What is Heyu?
+
+   Heyu is a program that allows your computer to control devices by
+   transmitting information over your house's power lines.
+
+2) What hardware is needed?
+
+   The CM11A power-line communications module from X10 connects to a
+   serial port on your computer.  It translates your computer's commands
+   to a signal that's transmitted over the AC wiring in your house.  A
+   CM12A is essentially the same thing for 230volt systems.
+
+   The X10 receiver modules (lamp, appliance, etc) listen for the signal
+   on the AC lines.
+
+3) What OS will Heyu run on?
+
+   The program was developed on a Linux system.  The compiled program
+   should work on any Linux system, although some of the directories
+   may differ between Slackware, Redhat and Debian.  Check the system
+   logs if the program does not run as expected.
+
+   The program may be portable to other Unix variants.  The source code
+   is included on the web site.
+
+   It has been reported that the program compiles (and runs) on Linux, BSD,
+   FreeBSD, OpenBSD, OS X, SunOS, Solaris and NEXTSTEP 3.3
+
+4) I down-loaded the file, now what?
+
+   The whole package is included in the file x10_heyu.tgz  This is a
+   tar file that has been gzipped.  Some of the individual parts are
+   also available from the web site.
+
+   The tar file will recreate the subdirectory heyu.dir.
+   CD to the directory of your choice.  Copy the tarred file there then type:
+   gunzip -c x10_heyu.tgz | tar xvf -
+
+   The compiled program is no longer included in the tar file, just the
+   complete source code.  The compiled program can be downloaded from
+   the heyu web site.
+
+   To compile the program, run the Configure program (./Configure)
+   and then type 'make'.  The resulting program is simply heyu.
+
+   To install the program and man pages, type 'make install' while logged
+   in as root.  It will try to locate your existing config file and will
+   offer to install a default config file if appropriate.
+
+   If necessary, you can copy the x10config file to your home directory
+   under the name .x10config and edit it to suit your environment.
+
+   * * * *
+   DO NOT MAKE THE EXECUTABLE SUID.  IT WILL CREATE SECURITY HOLES!
+   * * * *
+
+5) What is the .x10config file?
+
+   The x10config file is used to set certain definitions for the program.
+   X10 devices are normally addressed by a code represented by a letter
+   and a number.  The x10config file provides a way to associate 'names'
+   with devices.
+
+   For example, the name lamp can be used instead of D4, or porch-light
+   could be used instead of device K15.
+
+6) I made a local modification.  How do I build the program?
+
+   First, stop the running version of the program with 'heyu stop'.
+
+   A make file is included that will create the program.  Just type the
+   command 'make' in the directory where you unpacked the source.
+
+   When satisfied with the modifications, type 'make install' while
+   logged in as root.
+
+7) What's the heyu_relay process that's always running?
+
+   This is the process that gathers the output from the CM11 and stores
+   it for any program that may need it.  It also responds to the CM11's
+   requests for time updates and power failures.
+
+   The relay allows several programs to communicate with the CM11.
+   As an example, you can run the program in monitor mode in one window
+   to watch what's happening with the CM11, while cron's sending a
+   a command to the CM11 based on the system clock.
+
+8) When does the relay program get started?
+
+   The relay is automatically started the first time the program runs.
+   If it's killed for any reason, it will start up again the next time
+   the program runs.
+
+   I find it's best to run "heyu info &" in one of the local system startup
+   files.  This makes sure the relay daemon is running.
+
+9) I'm running the program for the first time, and it's saying:
+   "Invalid status response (was 0 bytes instead of 14)" and it's
+   not turning anything on or off.
+
+   This may indicate several things.
+   a)  The CM11 may not be connected to the correct serial port.  Com1
+       in DOS is ttyS0 in Linux. 
+   b)  The CM11 may not be plugged into the wall or the outlet may be
+       turned off.
+   c)  The CM11 may need to be prodded.  Some CM11's go to sleep when
+       first plugged in.  They wake up when they see the first X10 traffic
+       on the AC lines.  Use a mini-controller or wireless transmitter
+       to turn an X10 module on or off.
+   d)  You may be running another program (getty or a mouse driver) on the
+       same port.
+
+10) I have my CM11 set to house code A.  Will it report X10 events for
+    other housecodes?
+
+    Yes, any activity will be reported.  The 'monitored devices' line
+    of the info report only applies to devices set to the same housecode 
+    as CM11.
+
+11) Why the silly name?
+
+    My kids are grown and on their own, and I kind of missed being able
+    to shout out "Hey You! Turn the lights off!"
+
+12) Is there a web page?
+    
+    Yes.  http://heyu.tanj.com should bring you to the web page.
+    
+13) I run the program and get the output:
+    read: Bad file number
+
+    This generally means that the program can't open a necessary file.
+    Check the log files in /var/adm for error messages complaining about
+    files or directories.  Unfortunately, not all Unix systems use the
+    same directories for temp files, lock files and such.
+
+14) I have a CP290 instead of a CM11.  Will heyu work with it?
+
+    No.  Check the web page of Paul Fox.  There's a pointer to it at the
+    heyu web page listed above.
+
+15) What version number am I running?
+
+    Use the -v (verbose) option to see the version number.  It's the
+    first line to print out.
+
+    You can also get it with just the option 'version'
+
+16) Are there other Linux programs that will run a CM11?
+
+    There is another one called x10d that uses a network driver approach,
+    so you set up a network service and telnet to that port to issue
+    commands.  The author is Daniel D. Lanciani and a modified version
+    was posted to the net by Neil Cherry.
+    
+    The web location for Dan Lanciani's x10d is http://www.danlan.com/
+
+    There's a web site at
+    http://cesdis.gsfc.nasa.gov/linux-web/beowulf/x10.html that has a
+    program which also acts as a daemon.  I haven't looked at it yet.
+
+    There's the freeBSD daemon also called x10d at 
+    http://freebsd.org/~fsmp/HomeAuto/HomeAuto.html
+
+    See my website for current links.
+
+17) I want to control programs based on X10 signals.  Can I?
+
+    The Xtend program will read the spool file and launch an appropriate
+    program based on X10 messages received over the power bus.
+    I've barely used the program, but it sounds good.  The URL is:
+
+    http://www.jabberwocky.com/software/xtend/
+
+    Strting with version 1.35, heyu will run an auxilliary program 
+    called "heyuhelper" to execute programs based on X10 events.
+
+    See the man page for heyuhelper.
+
+18) The daemon doesn't die when I do a 'heyu stop'.
+
+    The code didn't always work in versions prior to 1.16.  Please
+    let me know if it happens with 1.6 or later.
+
+    You have to have permissions to kill(1) the daemon to stop it.
+
+19) The program does not work from my crontab.
+
+    Most likely problem is that the x10config file is not found.
+    Add the X10CONFIG variable to your crontab command.
+    This crontab does work where my home directory is /usr/dbs:
+
+    10 17 * * * X10CONFIG=/usr/dbs/.x10config heyu  turn a1 off
+
+20) My CM11A stopped working correctly on new years day.
+
+    It appears that the internal clock doesn't handle end of year
+    very well.  I added the following to my crontab to fix it.
+
+    1 1 1 1 * X10CONFIG=/usr/dbs/.x10config heyu setclock
+    2 1 1 1 * X10CONFIG=/usr/dbs/.x10config heyu macro
+
+21) Does HEYU do schedules, as in timers and macros?
+
+   As of version 1.28, it does schedules.  See the man page for 
+   information about how it should be set up.  The man page is
+   x10sched.conf(5)
+
+   There's a sample .x10sched.conf file in the source tar file.
+
+22) I just installed heyu and only an 'info' will work (but takes about
+   10 seconds), all other commands fail.  Activehome works fine on the
+   same machine under Win95.
+
+   The clue here is 'real slow'.  Sometimes plug and play systems change
+   the interrupts on the serial ports.  Sometimes you end up sharing 
+   interrupts with another device.  When that happens, you may end up having
+   to wait for the other device to need attention before your system will
+   look at the serial port.
+
+23) Heyu works, but it take 6 to 10 seconds to send a command.
+
+   See #22.  Heyu should take about 1 second to send an on or off comamnd.
+   The only exception is the very first time as it sets up the daemon.
+
+   Dim and bright may take a few seconds longer, but not much more than 
+   4 seconds.
+
+24) Does heyu handle leap year properly?  How about Daylight Savings Time?
+
+   Well, sort of.  The CM11 has no idea about what year it is, so it doesn't
+   track leap days.  It also doesn't adjust for DST.  My work around is to
+   refresh the clock May 1, and the day of the time change.
+
+   As of the 1.24 beta 7 and above,  the time is downloaded to the CM11A when
+   the Daylight savings time changes.
+
+25) I don't need the heyu program anymore.  I like windows better.  How 
+   do I get rid of it?
+
+   There is an uninstall option built into the Makefile.  Cd to the
+   source directory for heyu and ,as root, type 'make uninstall'.
+
+26) Can I specify all lights in a macro?
+
+   As of 1.33 and above, you can use "lightson" as in "heyu turn lightson"
+
+27) Do I have to download schedules to the CM11 in order to have them executed?
+
+    Yes, the CM11 must know about the macro.
+
+    Type "heyu upload" to load the macros and schedules into the CM11.
+
+28) What are some things that get in the way of Heyu communicating with the
+    CM11?
+
+    There are only a few things that interfere with Heyu and the CM11.
+
+    1) A running getty against the serial port.
+    2) Shared interrupts on an ISA based serial port.  This sometimes happens
+       when a Plug and Play card is reconfigured.
+      (com1 and 3 or 2 and 4 are frequently shared under windows.)
+    3) A powerline lignal coming in while the computer is sending a command.
+
+29) I use OpenBSD and don't see any information from the CM11.
+    Running heyu info says Firmware revision Level = 0 and Interface clock not
+    yet set.
+
+    OpenBSD requires that you add the following to /etc/ttys:
+    tty00   "/usr/libexec/getty std.9600"   unknown off local
+
+    See also the OpenBSD FAQ on the heyu web page.
+
+Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003 Daniel B. Suthers,
+Pleasanton Ca, 94588 USA
+E-mail dbs@tanj.com
+

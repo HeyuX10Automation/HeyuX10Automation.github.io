@@ -1,0 +1,37 @@
+Krad HEYU CGI Interface
+William Platnick
+wp7599@albany.edu
+AIM: CafeEblana
+http://www.kradcomputing.com
+
+This script uses the HEYU program by Dan Suthers <http://heyu.tanj.com>
+
+Welcome to the Krad HEYU CGI program.  This program parses your
+configuration and makes a nice CGI out of it so you can turn your stuff
+on and off and dim+brighten your lamps over the web.  Very useful coming
+back from vacation, lemme tell ya :)  Turning your AC on a day before
+you get home in summer is awesome.
+
+README
+------
+This program has no password protection in it.  I suggest putting it
+into a password protected directory or let other people have access to
+your lights :)
+
+Make sure heyu can be executed as the user the webserver runs under.
+
+Make sure the serial port can be read and written by the user the
+webserver runs under.
+
+Installation
+------------
+Not really hard to install
+
+Put it in your cgi-bin
+chmod 755 heyu.pl
+
+Edit the file, put the location of the heyu x10 config file in
+
+that's it :)
+
+

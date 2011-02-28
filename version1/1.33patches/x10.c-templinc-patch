@@ -1,0 +1,142 @@
+diff -b -w -C 8 x10.c.orig x10.c >! x10.c-diff
+*** x10.c.orig	Thu Aug 29 23:25:18 2002
+--- x10.c	Fri Aug 30 00:39:20 2002
+***************
+*** 53,68 ****
+--- 53,69 ----
+  int verbose;
+  int i_am_relay = 0;	/* flag to differentiate the relay process */
+  int port_locked = 0;	/* flag to show that the tty port is locked */
+  
+  void sigtimer(), err();
+  char hc2char();
+  void init();
+  int check4poll();
++ int temp_from_codes();
+  
+  char
+   syncmsg[SYNCN], flag;
+  
+  char latitude[20];
+  char longitude[20];
+  char macroxref[49];		/* file name to store macro cross reference */
+  
+***************
+*** 771,786 ****
+--- 772,791 ----
+      unsigned char buf[128];
+      char statstr[80];
+      extern char *funcmap[];
+      extern char *b2s();
+      time_t timestore;
+      struct tm *tp;
+      off_t f_offset;
+      extern char *storedmacro();
++     static int showtemp_unit = 0;
++     static int showtemp_waiting_for_preset = 0;
++ 	static int showtemp = 1;  /* TODO chaw: make option */
++ 	static char showtemp_hc = 'k'; /* TODO chaw: make option */
+  	
+      unit = -1;
+      hc = '\0';
+      func =  "" ;
+  
+      if( showdata )
+      {
+  	timestore = 0;
+***************
+*** 967,994 ****
+--- 972,1028 ----
+  					    statstr, func, hc, nl);
+  				}
+  				else
+  				{
+  				    printf("%s function  %6s : housecode %c%s",
+  					statstr, func, hc, nl);
+  				}
+  			    }
++ 
++ 			    if( showtemp && showtemp_waiting_for_preset == 1)
++ 			    {
++ 			      /* TODO chaw */
++ 				  if( funcbits == PRESET1 || funcbits == PRESET2 )
++ 					{
++ 					  printf("%s Temperature = %d%s",
++ 							 statstr, temp_from_codes(showtemp_unit, hc), nl);
++ 					  showtemp_waiting_for_preset = 0;
++ 					}
++ 				  else
++ 					{
++ 					  printf("%s Temperature botched %s", 
++ 							 statstr, nl);
++ 					}
++ 			    }
++ 
+  			}
+  			else		/* an address */
+  			{
+  			    hc = hc2char( ((buf[i] & 0xF0) >> 4) );
+  			    unit = unit2int( buf[i] & 0x0F) ;
+  			    if( showdata )
+  			    {
+  			        char tmp[10];
+  			        sprintf(tmp, "%d", unit);
+  				printf( "%s address unit %3d : housecode %c (%s)\n",
+  					 statstr, unit, hc, xmod_name(hc,tmp));
+  			    }
++ 			    if ( showtemp && hc == showtemp_hc)
++ 			      /* TODO chaw */
++ 			    {
++ 				  /*
++ 				  char tmp[10];
++ 				  sprintf(tmp, "%d", unit);
++ 				  printf( "%s address unit %3d : housecode %c (%s)  showtemp\n",
++ 						  statstr, unit, hc, xmod_name(hc,tmp));
++ 				  */
++ 				  showtemp_unit = unit;
++ 				  showtemp_waiting_for_preset = 1;
++ 			    }
+  			}
+  		    }
+  		    fflush(stdout);
+  		}
+  	    }
+  	    else
+  	    {
+  		if (verbose)
+***************
+*** 1123,1130 ****
+--- 1157,1189 ----
+  	{
+  	    printf( "Version=%s\n", VERSION );
+  	    printf( "SPOOLDIR=%s\n", SPOOLDIR);
+  	    printf( "LOCKDIR=%s\n", LOCKDIR);
+  	}
+  
+  return(0);
+  }
++ 
++ /*
++   TODO chaw
++ 
++   Given a unit code and a preset (dim) code, return an integer
++   denoting the temperature by decoding the input numbers based on the
++   documentation for the Templinc X10 temperature sensor and
++   thermostat.  The mapping from unit number and preset dim level to
++   temperature is given by
++ 
++      temperature = (preset - 29) + (unit - 12) * 32
++ 
++   for preset in 1..32 and unit in 12..16.
++ 
++   Returns -100 (an out-of-range temperature value) on error.
++  */
++ int temp_from_codes(unit, preset)
++ int unit;
++ int preset;
++ {
++ #define ERROR_VAL  -100
++   if(unit < 12 || unit > 16) return ERROR_VAL;
++   if(preset < 1 || preset > 32) return ERROR_VAL;
++   return (preset - 29) + (unit - 12) * 32;
++ }

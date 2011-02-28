@@ -1,0 +1,10 @@
+
+Here is a patch, if you are are interested, which allows extended dimming
+control (for my Leviton light switches).  Its just a simple modification
+of the preset.c code.  Its only been tested on one house code ('o') and
+I'm not a C programmer so here's hoping it works!
+
+Thanks for the software,
+
+Aaron
+

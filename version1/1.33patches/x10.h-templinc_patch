@@ -1,0 +1,40 @@
+diff -b -w -C 8  x10.h.orig x10.h >! x10.h-diff
+*** x10.h.orig	Thu Aug 29 23:55:14 2002
+--- x10.h	Thu Aug 29 23:55:24 2002
+***************
+*** 35,51 ****
+  /* Some lints don't know about the void type */
+  
+  #ifdef VOID
+  #define void int
+  #endif
+  
+  #ifdef  SCO
+  #define _IBCS2
+! #endif  SCO
+  
+  #ifndef XDIR
+  #define XDIR "."		/* directory containing X10 files */
+  #endif
+  
+  #ifndef SPOOLDIR
+  #ifdef        SCO
+  #define SPOOLDIR "/usr/tmp/" /* dir for spool files */
+--- 35,51 ----
+  /* Some lints don't know about the void type */
+  
+  #ifdef VOID
+  #define void int
+  #endif
+  
+  #ifdef  SCO
+  #define _IBCS2
+! #endif  /* SCO */
+  
+  #ifndef XDIR
+  #define XDIR "."		/* directory containing X10 files */
+  #endif
+  
+  #ifndef SPOOLDIR
+  #ifdef        SCO
+  #define SPOOLDIR "/usr/tmp/" /* dir for spool files */

@@ -1,0 +1,217 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title> X10 program quick info </title>
+</head>
+<body background="back.gif">
+
+<center>x10 </center>
+<p>
+This version of Larry Campbell's x10 program has been modified to support
+module aliases, and sunrise and sunset calculations.  It currently builds
+under Linux.  I can't offer much help on other systems, but it shouldn't
+be too hard to get running.
+</p>
+
+<p>
+To use the aliasing feature, create a file called x10config, in the X10
+directory.  The file should be similar to the example x10config file, which
+describes some lamps and my water sprinklers.  I use the &quot;sched&quot; script
+to water my lawn and control my thermostat.
+</p>
+
+<p>
+I've also included my &quot;x10biff&quot; script, which turns on a light when i
+have email to read, and my &quot;monit&quot; script, which turns off the system
+monitor if the console is idle.  These scripts should be run from cron,
+every 5 minutes or so.  Since the x10 command does no locking, you should
+guarantee that multiple scripts do not invoke it simultaneously.  I do
+this by running both of these from a single simple script that runs them
+in sequence.
+</p>
+
+<p>
+(I did not update the man page, much...)
+</p>
+<p>
+oh -- you should also send critical X10 commands when your system boots,
+since you don't know what state the modules were in when the system went
+down, for a power failure, say.  I have the following lines in /etc/rc.local:
+</p>
+<pre>
+	# for safety, after a power failure
+	if [ -x ~pgf/bin/x10 ]; then
+		echo turning off water sprinklers
+		~pgf/bin/x10 turn allwater off &amp;
+	fi
+
+
+paul fox, pgf@foxharp.boston.ma.us
+Mon Jul  6 10:28:21 EDT 1992
+
+-----------------------------------------
+
+DESCRIPTION
+</pre>
+
+<p>
+x10 is a little program for hacking a BSR X10 &quot;Powerhouse&quot; home
+control device.  This gizmo, currently sold by DAK (a discount mail
+order house) for $49.95, can remotely control lights and appliances
+in your house by signaling over the house wiring.  Since most people
+know what the X10 system does (see the DAK catalog for details;  Radio
+Shack also sells X10 stuff) I won't describe it in detail here.
+</p>
+
+<p>
+The gizmo comes with software for IBM PCs, Apples, or Commodores, but
+I wanted to hang it off my UNIX box.  So I wrote this program.
+</p>
+
+<p>
+The BSR X10 Powerhouse connects to a computer with an RS232 interface.
+It can store up to 128 events;  each event can turn on, turn off, or dim
+up to sixteen slave units.  The X10 box has a battery backed up clock
+which the computer can read, which turned out to be one of its biggest
+uses for me -- my computer doesn't have a battery clock.
+</p>
+
+<p>
+Each slave unit has a one-letter housecode ranging from A to P (for 16
+different codes) and a number from 1 to 16.  x10's command structure
+is pretty primitive.  See the man pages for details.
+</p>
+
+INSTALLATION<br/>
+
+<p>
+Hopefully, the only file that needs to be configured for your
+system is the makefile.  You may need to review x10.h and tty.c
+if you experience any trouble.
+</p>
+
+<pre>
+Change BIN to the location of your favorite directory.
+Change OWNER to whichever login you want.
+Keep the GROUP set to sys.
+
+the DFLAGS line in the makefile needs to be configured as follows:
+
+	add -DVENIX if you are using Venix
+	add -DSYSV if you are using System III or V
+	add -DMINIEXCH if you are using the DEC mini-exchange
+	add -DVIOD if your compiler doesn't have type void
+	add -DXDIR=\&quot;fullpath_name/x10\&quot; if you don't want to
+		use the default path of the current directory
+
+After changing the makefile for your system, do 'make'.
+Next, cd as 'root' to /dev and link the root filesystem
+and tty port connected to the 'X10' as follows:
+	ln root_fs_special_device x10fs
+	ln tty_port x10
+</pre>
+
+<p>
+The port connected to the x10 should not have a getty running.
+The root filesystem needs to be set to group 'sys' and mode 440.
+('x10 date' is the only command that requires this.  If you do
+not want to do it because you're worried about security, do not
+create /dev/x10fs.  All other features of x10 will work.)  The
+tty port connected to the x10 needs to be changed to the owner
+of the 'X10 device', and the mode needs to be set to 600.
+</p>
+
+<p>
+Finally, do 'make install' as root to install x10 in the proper
+location, with the proper owner and the proper permissions.
+</p>
+
+PORTABILITY<br/>
+
+<p>
+This has been tested under VENIX/Rainbow, which is basically V7 (thus
+there are no short-identifier problems), and on System V, Release 3.0.
+It should run OK under BSD-flavor UNIX.
+</p>
+
+NOTES<br/>
+
+<p>
+I'm running my X10 through a DEC Mini-Exchange, which is a dumb little
+8-port programmable port selector.  (My computer has only one, count 'em,
+serial port with modem control, which is why I use the Mini-Exchange.)
+</p>
+
+<p>
+There are two VENIX-specific hacks in x10.  First, my routine hangup()
+depends on a modification I made to the VENIX tty driver that causes it
+to drop DTR if you set the baud rate to zero, and raise it again when
+you set the baud rate to a nonzero number.  Most modern flavors of UNIX
+have an ioctl or something to do this.  
+</p>
+
+<p>
+Second, there are a number of occurrences of:
+<br/>
+	sleep(SMALLPAUSE);<br/>
+</p>
+<p>
+where SMALLPAUSE is #defined to be -10.  This is a VENIX-specific hack
+that means sleep for 10 60ths of a second, or 1/6th of a second.  This
+isn't critical; if VENIX is not defined in the makefile, SMALLPAUSE is 
+set to 1.
+</p>
+<pre>
+EXAMPLES
+
+Example contents of an id file:
+
+1	Bedroom switched table lamp
+2	Office switched floor lamp
+3	Living room ceiling lights
+4	Front porch and garrage lights
+5	Family room hanging lamp
+6	Family room portable radio
+7	Thermostat
+8	Bedroom protable tv
+
+Example output of the 'x10 dump all' command using the above id file:
+
+    SLOT    UNIT    STATE    ID    DESCRIPTION
+       0    c1      Off      001   Bedroom switched table lamp
+       1    c2      Off      002   Office switched floor lamp
+       2    c3      Off      003   Living room ceiling lights
+       3    c4      Off      004   Front porch and garrage lights
+       4    c5      Off      005   Family room hanging lamp
+       5    c6      Off      006   Family room portable radio
+       6    c7      Off      007   Thermostat
+       7    c8      Off      008   Bedroom protable tv
+
+   EVENT   STATE    MODE       DAYS        TIME     UNITS
+       0   On       Normal     Everyday    21:00    c5
+       1   Off      Normal     Everyday    22:30    c1-8
+       2   Dim  8   Normal     Everyday    21:15    c3
+       3   Off      Normal     Everyday    21:45    c3
+       4   On       Today                  21:33    c1
+       5   Dim  4   Security   Weekdays    20:15    c2
+       6   Off      Normal     Weekend      1:00    c1-2,6-7
+
+- Larry Campbell (maynard!campbell)
+  with help from John Chmielewski (rogue!jlc)
+  September 1, 1986
+
+
+=======================
+</pre>
+<p>
+      <a href="http://validator.w3.org/check?uri=referer"><img
+          src="http://www.w3.org/Icons/valid-xhtml11"
+          alt="Valid XHTML 1.1!" height="31" width="88" /></a>
+    </p>
+</body>
+</html>

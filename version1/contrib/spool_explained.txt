@@ -1,0 +1,72 @@
+                        Explaining Heyu's spool file.
+
+Background:
+The CM11 is a very unsophisticated device.  There is no flow control
+for the serial communication, no way to interrogate the device to see
+what's in it's memory, etc.  Most especially, there's no way to ask the
+CM11 to repeat itself.  
+
+If you couple this lack of sophistication with the way that serial ports
+work, you can see that there is a problem whenever you want to have two
+programs using the CM11 information at the same time.  Take the classic
+example of wanting to monitor the X10 line signals (using heyu monitor or
+Xtend) while sending out X10 commands, such as turning lights on and off.
+
+Without a middle man of some sort, one program would get parts of the
+message, and the other with get the other parts.  Neither program would
+work properly.
+
+The spool file is set up to allow multiple heyu processes access to the
+output of the CM11 at the same time.  Initially, the only thought was
+that I'd allow a monitor to co-exist with another heyu command.  Then came
+xtend and other utilities that wanted to use the cm11 output too.
+
+The spool file format is not perfect.  Part of that is because it's assumed
+that it will be read and written in real time, as there are timing sensitive
+bits of information passed back and forth.
+
+Overview:
+The heyu daemon is the only process that reads directly from the serial 
+port. All others read from the spool file.
+
+All processes can write to the spool file, and they do so to let
+monitoring processes know what data was sent.  
+
+The majority of the data in the spool file is the 8 bit words exactly
+as sent to or received from the CM11.  The exception is a "preamble"
+that tells a monitoring process that the next X number of bytes were
+transmitted to the CM11, not received.
+
+We did not want the monitor subroutine to get confused, so when we've 
+asked the CM11 for something specific and are waiting for a reply, we put a
+marker in the spool that says so.
+
+The format:
+The format is fairly easy.  Incoming data is written one byte at a time
+to the spool file in the same order it is received.  It is parsed for
+"Power Failed" indicators, which are handled by the daemon.
+
+When data is sent to the CM11, the xrite() function first writes to the
+spool file a marker and the number of characters to be written.  The marker is 
+three bytes with the value 0xff.  The size is the number if bytes to be written.
+The size must be less than 127.
+A marker for a 5 byte statement might look like 0xff 0xff 0xff 0x5.
+
+When we are expecting a reply from the cm11, we write a marker of 3 0xff
+bytes followed by the number of bytes expected plus 127.  A marker for a
+1 byte expected response (such as a check sum response) might look like
+0xff 0xff 0xff 0x80
+
+Caveats:
+In the near future, the spool file will be renamed in such a way
+that there can be multiple CM11s on one system.  an example would be
+heyu.outttyS0.
+
+To complicate matters, noise on the AC line is sometimes interpreted as
+partial X10 signals.  This can make for some very interesting output.
+
+When interpreting the spool file, timing matters.  The byte  0x5a is
+special if it's repeated once a second.  To speed things up, I've assumed
+it's also special if it's the first byte I see in a while.  Unless you
+are running in real time you can't tell if the 0x5a is part of a bigger
+message or not.

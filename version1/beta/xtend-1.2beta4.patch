@@ -1,0 +1,402 @@
+diff -b -w -C 8 xtend-1.2beta4/exec.c xtend-1.2beta4.local/exec.c
+*** xtend-1.2beta4/exec.c	Thu Mar 18 08:01:30 1999
+--- xtend-1.2beta4.local/exec.c	Sat May 27 13:04:04 2000
+***************
+*** 13,28 ****
+--- 13,29 ----
+   * 
+   *    You should have received a copy of the GNU General Public License
+   *    along with this program; if not, write to the Free Software
+   *    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+   */
+  
+  #include <errno.h>
+  #include <strings.h>
++ #include <string.h>
+  #include <sys/types.h>
+  #include <sys/wait.h>
+  #include <unistd.h>
+  #include <stdlib.h>
+  #include <stdio.h>
+  #include "x10.h"
+  #include "exec.h"
+  #include "util.h"
+***************
+*** 47,67 ****
+  
+  void
+  docommands (int house, x10code command)
+  {
+    int x = (int) RCSID;		/* stupid hack */
+    int dimlevel=house,inc=16;
+  
+    if (verbose > 3)
+      if(command==PREDIM1)
+        printf("Doing commands for Pre-set Dim, level %d :\n",house+1);
+      else
+        printf ("Doing commands for house %c, command %s :\n", house + 65, commands[command]);
+! 
+    /* This is weird, but probably accurate to the X10 hardware.  Since
+       a pre-set dim can't have a house code on it, we must check them
+       all. */
+  
+    if(command==PREDIM1)
+      {
+        inc=1;
+        house=0;
+--- 48,69 ----
+  
+  void
+  docommands (int house, x10code command)
+  {
+    int x = (int) RCSID;		/* stupid hack */
+    int dimlevel=house,inc=16;
+  
+    if (verbose > 3)
++     {
+        if(command==PREDIM1)
+          printf("Doing commands for Pre-set Dim, level %d :\n",house+1);
+        else
+          printf ("Doing commands for house %c, command %s :\n", house + 65, commands[command]);
+!     }
+    /* This is weird, but probably accurate to the X10 hardware.  Since
+       a pre-set dim can't have a house code on it, we must check them
+       all. */
+  
+    if(command==PREDIM1)
+      {
+        inc=1;
+        house=0;
+diff -b -w -C 8 xtend-1.2beta4/parse.c xtend-1.2beta4.local/parse.c
+*** xtend-1.2beta4/parse.c	Fri Mar 12 15:33:22 1999
+--- xtend-1.2beta4.local/parse.c	Sat May 27 13:02:31 2000
+***************
+*** 95,119 ****
+--- 95,121 ----
+  
+    for (x = 0; x < NUM_COMMANDS; x++)
+      {
+        for (y = 0; y < 16; y++)
+  	{
+  	  for (z = 0; z < 16; z++)
+  	    {
+  	      if (commandtable[x][y][z] != NULL)
++ 	        {
+  		if (x == 0 || x == 1)
+  		  {
+  		    printf ("X10 command=%s, house=%c, shell command=\n\t%s\n",
+  			    commands[x], y + 65, commandtable[x][y][z]);
+  		  }
+  		else
+  		  {
+  		    printf ("X10 command=%s, house=%c, unit=%d, shell command=\n\t%s\n",commands[x], y + 65, z + 1, commandtable[x][y][z]);
+  		  }
++ 		}
+  	    }
+  	}
+      }
+  }
+  
+  void
+  parseinit (void)
+  {
+Only in xtend-1.2beta4.local: tags
+Common subdirectories: xtend-1.2beta4/tools and xtend-1.2beta4.local/tools
+diff -b -w -C 8 xtend-1.2beta4/util.c xtend-1.2beta4.local/util.c
+*** xtend-1.2beta4/util.c	Wed Mar 17 10:13:01 1999
+--- xtend-1.2beta4.local/util.c	Sat May 27 14:17:21 2000
+***************
+*** 17,32 ****
+--- 17,33 ----
+   */
+  
+  #include <stdlib.h>
+  #include <signal.h>
+  #include <sys/stat.h>
+  #include <fcntl.h>
+  #include <limits.h>
+  #include <strings.h>
++ #include <string.h>  /* for strerror */
+  #include <errno.h>
+  #include <sys/types.h>
+  #include <unistd.h>
+  #include <stdio.h>
+  #include "parse.h"
+  #include "util.h"
+  #include "x10.h"
+  
+***************
+*** 79,99 ****
+  void
+  getbytes (int fd, char *buf, int count)
+  {
+    ssize_t bytes = 0, index = 0;
+  
+    if (verbose > 8)
+      printf ("Getting a message of %d (0x%X) bytes\n", count, count);
+  
+!   while (index != count)
+      {
+        bytes = read (fd, &buf[index], count - index);
+        index += bytes;
+      }
+  }
+  
+  int
+  waitforpoll (int fd)
+  {
+    fd_set descs, zero;
+    struct timeval timeout;
+    int err;
+--- 80,102 ----
+  void
+  getbytes (int fd, char *buf, int count)
+  {
+    ssize_t bytes = 0, index = 0;
+  
+    if (verbose > 8)
+      printf ("Getting a message of %d (0x%X) bytes\n", count, count);
+  
+!   alarm(2);
+!   while (index != count && bytes >=0 )
+      {
+        bytes = read (fd, &buf[index], count - index);
+        index += bytes;
+      }
++   alarm(0);
+  }
+  
+  int
+  waitforpoll (int fd)
+  {
+    fd_set descs, zero;
+    struct timeval timeout;
+    int err;
+***************
+*** 120,135 ****
+--- 123,143 ----
+        if (err == -1)
+  	{
+  	  if (errno == EINTR)
+  	    return 0;
+  
+  	  fprintf (stderr, "select: %s\n", strerror (errno));
+  	  exit (-1);
+  	}
++       *buf = (char) NULL;
++       /* Used with heyu, should only get the first byte */
++       if( file != NULL )
++         bytes = read (fd, buf, 1);
++       else
+          bytes = read (fd, buf, sizeof (buf));
+  
+        /* this is arguably foolish, but how else can one
+           handle receiving an EOF continually?
+           It only happens when using a heyu file (of course),
+           and actually is how 'tail(1)' handles the same thing. */
+  
+        timeout.tv_sec = HEYU_TIMEOUT;
+***************
+*** 148,163 ****
+--- 156,178 ----
+  	printf ("%d bytes, starting with [%X]\n", bytes, buf[0]);
+  
+        /* was there a power failure? */
+        /* we have to do this or the CM11a won't give us data */
+        /* Of course, only do it if we are talking to the port
+           ourselves.  Otherwise, heyu will handle it for us */
+        if (*buf == POWERFAIL && file == NULL)
+  	setcm11atime (fd);
++ 
++       /* if used with heyu, the loop should exit after seeing the POLL char */
++       if( file != NULL )
++         {
++           if (bytes == 1 && *buf == POLL )
++             break;
++ 	}
+      }
+  
+    if (verbose > 8)
+      printf ("got it!\n");
+  
+    /* only send an ack if we're handling the serial stuff
+       ourselves */
+  
+***************
+*** 182,198 ****
+--- 197,215 ----
+  getmessage (int fd, char *buf)
+  {
+    int bytes = 0;
+    char count;
+  
+    /* get the number of bytes we need to pull in */
+    while (bytes == 0)
+      {
++       alarm(3);
+        bytes = read (fd, &count, 1);
++       alarm(1);
+      }
+  
+    if (verbose > 8)
+      printf ("A message of size %d (0x%X)\n", count, count);
+  
+    getbytes (fd, buf, count);
+    return count;
+  }
+***************
+*** 367,397 ****
+--- 384,421 ----
+  }
+  
+  void
+  setsignals (void)
+  {
+    signal (SIGTERM, interrupt);
+    signal (SIGINT, interrupt);
+    signal (SIGHUP, interrupt);
++   signal (SIGALRM, keep_going);
+  }
+  
+  void
+  shutdown (void)
+  {
+    if (verbose > 0)
+      printf ("Caught signal - shutting down\n");
+  
+    /* remove the lockfile, if necessary */
+    if (file == NULL)
+      lockfile (port, lockdir, DO_UNLOCK);
+  
+    /* close the status file */
+    close (statusfile);
+    statusfile = -1;
++ }
++ 
++ RETSIGTYPE
++ keep_going (int signal)
++ {
++     
+  }
+  
+  void
+  setcm11atime (int fd)
+  {
+    char message[7];
+    struct tm *now;
+    int x;
+diff -b -w -C 8 xtend-1.2beta4/util.h xtend-1.2beta4.local/util.h
+*** xtend-1.2beta4/util.h	Sun Mar 14 12:56:15 1999
+--- xtend-1.2beta4.local/util.h	Sat May 27 14:12:09 2000
+***************
+*** 30,43 ****
+--- 30,44 ----
+  void printbytes (unsigned char *buf, int length);
+  void getbytes (int fd, char *buf, int count);
+  int waitforpoll (int fd);
+  int getmessage (int fd, char *buf);
+  void wipeaddresstable (int house);
+  void handlemessage (char *buf, char length);
+  void lockfile (char *port, char *lockdir, int action);
+  void shutdown (void);
++ void keep_going(int signal);
+  void interrupt (int signal);
+  void setsignals (void);
+  int changeenv (int house, int unit);
+  void updatestatusfile (int house, int unit);
+  
+  #endif /* !_UTIL_H_ */
+diff -b -w -C 8 xtend-1.2beta4/version.h xtend-1.2beta4.local/version.h
+*** xtend-1.2beta4/version.h	Sat May 27 14:19:41 2000
+--- xtend-1.2beta4.local/version.h	Sat May 27 13:58:29 2000
+***************
+*** 1 ****
+! #define VERSION "1.2beta4"
+--- 1 ----
+! #define VERSION "1.2beta4_ds"
+diff -b -w -C 8 xtend-1.2beta4/xtend.c xtend-1.2beta4.local/xtend.c
+*** xtend-1.2beta4/xtend.c	Thu Mar 18 16:11:20 1999
+--- xtend-1.2beta4.local/xtend.c	Sat May 27 13:56:24 2000
+***************
+*** 162,177 ****
+--- 162,180 ----
+  
+    for (;;)
+      {
+        if (special == 0)
+  	{
+  	  if (waitforpoll (x10))
+  	    {
+  	      length = getmessage (x10, buf);
++ 		/* all valid commands should fall in this range */
++ 	      if (length < 2 || length > 16 )
++ 	        continue;
+  	      handlemessage (buf, length);
+  	    }
+  	  else
+  	    {
+  	      close (x10);
+  
+  	      if (special == 1)
+  		{
+***************
+*** 321,336 ****
+--- 324,341 ----
+        lockfile (port, lockdir, DO_LOCK);
+  
+        x10 = open (port, O_RDWR | O_NOCTTY);
+      }
+    else
+      {
+        /* heyu file */
+        x10 = open (file, O_RDONLY | O_NOCTTY);
++       if ( x10 < 0 )
++         fprintf (stderr, "Couldn't open Heyu spool file: %s\n", strerror (errno));
+      }
+  
+    if ((fdstats = fcntl (x10, F_GETFD, 0)) < 0)
+      {
+        fprintf (stderr, "Couldn't fcntl x10: %s\n", strerror (errno));
+        exit (-1);
+      }
+  
+***************
+*** 412,428 ****
+    printf ("Default RCfile=$HOME/%s\n", DEFAULT_RCFILE);
+  }
+  
+  void
+  daemonize(void)
+  {
+    pid_t child;
+  
+!   child=vfork();
+    if(child==-1)
+      {
+        printf("Couldn't fork to daemonize: %s\n",strerror(errno));
+        exit(-1);
+      }
+  
+    if(child!=0)
+      {
+--- 417,436 ----
+    printf ("Default RCfile=$HOME/%s\n", DEFAULT_RCFILE);
+  }
+  
+  void
+  daemonize(void)
+  {
+    pid_t child;
+  
+!   /* Fork used instead of vfork.  Vfork was not returning until the child 
+!      died on my 2.2.14 system with gcc version egcs-2.91.66 */
+! 
+!   child=fork();
+    if(child == -1)
+      {
+        printf("Couldn't fork to daemonize: %s\n",strerror(errno));
+        exit(-1);
+      }
+  
+    if(child != 0)
+      {

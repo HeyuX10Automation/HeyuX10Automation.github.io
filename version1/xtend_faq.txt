@@ -1,0 +1,94 @@
+From flonesaw@longship.net (Arne Flones)  Fri Sep 29 16:06:29 2000
+
+-------- FAQ Entry ---------------------
+FAQ: How do I integrate Xtend and HeyU so they work together?
+
+Answer:
+
+This assumes you have followed the instructions to compile and install
+the latest version of heyu.  You should also onfigure Heyu per the
+instructions in the man pages.
+
+   man x10config
+   man x10sched
+
+Until Dave Shaw updates his Xtend source code, only the version on the
+Heyu Web site will work.  You can get it here:
+   <a href="http://heyu.tanj.com/beta/xtend-1.2beta4.local.tgz">xtend-1.2beta4.local.tgz</a>
+
+Expand the tarball:
+
+    tar xvzf /my/download-location/xtend-1.2beta4.local.tgz
+
+Go to the xtend-1.2beta4.local directory and configure, compile and
+install Xtend:
+
+   cd xtend-1.2beta4.local
+   ./configure
+   make
+   make install
+
+Now edit your .xtendrc file in your home directory.
+
+To make Xtend work with Heyu, you *must* configure Xtend to read
+information from Heyu's data file at /var/tmp/heyu.out, *not* from the
+serial port.  Comment out the "Port /dev/ttyS0" line in .xtendrc and
+uncomment the line that has "File /var/tmp/heyu.out".
+
+If you use version 1.34 or higher, you need to add the port name to the
+end of the line so it looks like File /var/tmp/heyu.outttyS0.  Version
+1.34 can handle multiple CM11s.
+
+Make your other changes to .xtendrc for your particular X10
+configuration.
+
+Before starting the Xtend daemon you must start the heyu_relay
+daemon.  To do this run the command:
+
+   heyu info
+
+This will provide a status update to make sure that heyu is running
+properly.  You can verify that the Heyu daemon is running with the
+following command:
+
+   ps ax | grep heyu
+
+You should see something like this:
+
+   3552  ttyS0   S    0:00  heyu_relay o
+   3569  tty1    S    0:00  grep heyu
+
+The first line indicates that the daemon is running.
+
+Now run the Xtend daemon.
+
+    xtend &
+
+You should be in business.
+
+-------End of FAQ entry---------------
+
+Something like this sure would be helpful to those unfamiliar with
+your software.
+
+After an evening of trying different versions of Xtend I figured
+everything out by trial and error after error (with and without your
+patch file).  Things look fine for me now.  Xtend and HeyU are
+plunking right along.
+
+Maybe this all begs the question as to why you two don't integrate the
+two programs into one.  The sum of the two would certainly be a much
+more robust product.
+
+By the way, I am running this on my StrongARM-based NetWinder.  You
+can add that platform on your list of compatibles.  Pretty cool
+actually.
+
+Thank you, both of you, for your great software.
+
+
+Regards,
+
+flonesaw@longship.net
+
+

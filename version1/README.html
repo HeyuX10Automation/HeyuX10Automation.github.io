@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title> HEYU program overview </title>
+</head>
+<body background="back.gif">
+<center>
+<h1>
+HEYU Program overview
+</h1>
+</center>
+<p>
+This program operates an X10 module via a CM11A computer interface.  It
+is based on the program X10 by Larry Cambell as modified by Paul Fox.
+All but a few functions have been changed enough that they no longer
+interwork with the original.  I think this justifies issuing the interim
+copy as 'heyu' instead of 'x10'.  </p>
+
+<p>
+The program name comes from the old joke about having a 3rd person in
+the house.  The evidence of that is the frequently heard yells of "Heyu!
+Turn off the lights!"  A poor joke, but I like it.
+</p>
+
+<p>
+The program is strictly command line driven, and works well with crontab.
+Crontab can be used to schedule events until such time as I finish the code
+that loads the events into the CM11A.
+</p>
+
+
+<p>
+The program comes complete with source code, sample config files, MAN pages
+an executable binary.  The program has options to allow you to:
+</p>
+<ul>
+<li>Get the date and time from the interface</li>
+<li>Get information about current settings and module states</li>
+<li>Turn an X10 module on or off</li>
+<li>Dim or brighten an X10 module</li>
+<li>Monitor all data sent to or from the CM11A</li>
+<li>Get the status of intelligent X10 modules (rr501 for instance)</li>
+<li>Set the X10 clock from the computer's clock (time and date)</li>
+<li>Zero out the macro and event memory of the X10</li>
+</ul>
+
+
+<p>
+Some of the most important features have not been addressed yet.  Mainly,
+the ability to schedule events.  
+The people at X10 have informed me that there is no way to download (to
+the computer) the events stored in the CM11A.  That being the case, I am
+writing programs that will load the events and macros from local data
+files.  This will erase whatever has been stored there, but I guess that's the way it has to be.
+</p>
+
+<p>
+This should compile on any Linux system.  It should also compile on any 
+other BSDish or SYSV system.  Just edit the #define in the make file.
+Make install will try to install the man page and the program.  The makefile
+has defines for these locations.
+</p>
+
+<p>
+See the <a href="README.X10.html"> original README</a> in Larry Campbell's  program for some nice info on the cp290
+and the history of the program.  See the original for some really niffty 
+uses once scheduling is integrated.
+</p>
+
+<p> There are two demo programs included with heyu, <em>monit</em> and <em>x10biff</em>.
+<br/>
+</p>
+<ul>
+<li>
+The <em>monit</em> program will turn off your monitor based on idle time.  It's the 
+ultimate screen saver. 
+</li>
+
+
+<li> The <em>x10biff</em> program will flash a light to let you know that you have E-mail.
+</li>
+</ul>
+
+<p>
+Daniel B. Suthers, CCP, CSP<br/>
+12-31-1996<br/>
+E-mail: dbs@tanj.com<br/>
+</p>
+ <p>
+      <a href="http://validator.w3.org/check?uri=referer"><img
+          src="http://www.w3.org/Icons/valid-xhtml11"
+          alt="Valid XHTML 1.1!" height="31" width="88" /></a>
+    </p>
+</body>
+</html>
