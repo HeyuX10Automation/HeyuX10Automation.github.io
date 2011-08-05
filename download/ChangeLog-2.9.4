@@ -1,0 +1,139 @@
+commit 1a1dba48a3f28be4ede340febde236dc1a53d5b9
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Fri Aug 5 21:17:09 2011 +0200
+
+    Heyu 2.9.4
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit cad8440448f218928a1692a0fd3770d1024b732f
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Fri Jun 17 15:52:51 2011 +0200
+
+    Engine: Prevent from buffer overflows
+    
+    While using rather long alias names, combined with most options which
+    output additional information the the Heyu log reported signal
+    descriptions (like DISPLAY_SENSOR_INTV, ORE_DISPLAY_CHAN, SHOW_CHANGE,
+    etc.) turned on, it happened to me that my Heyu engine started breaking
+    regularly, reporting 'buffer overflow', after I rebuilt it with a recent
+    compiler version.
+    
+    While this patch can be seen as being far from a proper long-term
+    solution, and should be rather considered as a simple, non-invasive
+    preventive workaround, I'm no longer experiencing buffer overflows with
+    it applied, so decided to push it as a fix.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit eb484a85819b71757c96a22fbf023e8c5484e088
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Sat Jul 30 19:32:40 2011 +0200
+
+    Fix 'Poll received unknown value' wrong byte count
+    
+    If it ever happens that a broken sequence, other than an incoming
+    powerline signal, is fetched from the Heyu spool file by the engine or
+    monitor, the check4poll() function puts all 0xff bytes collected so far
+    back to the buffer and passes them, together with the following byte,
+    for being reported with the "Poll received unknown value ..." error
+    message. However, while doing this, the actual length of the broken
+    sequence is not set, moreover with the variable expected to carry the
+    length being used meanwhile for temporary storing the last byte value.
+    As a result, the "Poll received unknown value ..." messages provide
+    incorrect sequence lengths if different from 1 byte.
+    
+    While this bug doesn't affect Heyu ability to recognise and interpret
+    the spool file contents correctly, it makes it harder to diagnose other
+    problems, either hardware related or caused by other bugs, which
+    exhibit themselves with "Poll received unknown value ..." reports.
+    This issue has just been discovered while hunting for such other bugs
+    (see #10).
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit be8bf87914bd787e7e355f2fed3fd3c0f669191b
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Sat Jul 30 19:26:57 2011 +0200
+
+    Allow for less frequent spool file polling
+    
+    As stated in ticket #6, for some Heyu applications, polling the Heyu
+    spool file once per 100 ms can be recognised as still to often. The once
+    per second polling period, always used on a few less common platforms
+    and introduced recently for Linux in Heyu 2.9.3 as a temporary
+    countermeasure against a different issue, proved quite enough for users
+    not requiring very prompt status updates.
+    
+    Now that the temporary solution has been replaced by a proper fix
+    (see ticket #1), running at that reduced polling speed would no longer
+    be possible and the problem of Heyu consuming too much resources could
+    hit users who suffered from it before back again.
+    
+    Allow for the ENGINE_POLL configuration directive to accept values
+    up to 1000000, resulting in max polling period extended to one second.
+    
+    Fixes #6
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 0f29614b05e33ed68978ba6ba2b946658fab1f3d
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Sat Jul 30 19:18:37 2011 +0200
+
+    Fix 'changed' handling for rain sensors
+    
+    It had been reported that the ORE_CHGBITS_RAINRATE directive didn't
+    work as expected, not preventing consecutive oreRainRate signals
+    with close or even the same values from showing up in the Heyu log.
+    Further investigation made it clear that the problem was rather the
+    'changed' state calculated incorrectly for rain sensors, no matter how
+    the ORE_CHGBITS_RAINRATE was set.
+    
+    Examination of the Heyu code revealed that the source of this problem
+    was incorrect offset used for accessing oreRainTot data in the data
+    store. As a result, oreRainRate data stored for future reference was
+    partially overwritten by oreRainTot, making correct comparison with
+    previous values required for 'changed' evaluation not possible.
+    
+    The patch is supposed to correct the problem.
+    
+    Created against Heyu 2.9.3.
+    Fixes #3
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 0a93456f44b8967ffc703520c6fa80503164d690
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Wed Dec 15 17:11:34 2010 +0100
+
+    Use microsleep(ENGINE_POLL) instead of sleep(1)
+    
+    Now that we stopped using select() as a *sleep() replacement on linux,
+    both the Heyu engine and monitor fall back to polling the spool file
+    once a second while idle, irrespective of the ENGINE_POLL value, either
+    default or redefined in an x10config file.
+    
+    In order to keep the ENGINE_POLL directive effective on linux, replace
+    the fallback arbitrary sleep(1) with an already defined custom
+    microsleep() function call, which is supposed to be portable.
+    
+    This should make the ENGINE_POLL being respected on other platforms
+    as well, which have never been build with HASSELECT defined.
+    
+    Created and tested against heyu-2.9.2.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit ed5e0ff0a1107f5705d312105eb28140dd9e54fc
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Fri Mar 11 13:56:38 2011 +0100
+
+    Fix KAKU key range not covering key number 16
+    
+    It looks like the KAKU key range was defined wrong while a corresponding
+    moudule options parsing function had been refactored in the past. There
+    is still a prototype function, not yet removed from the sources, with
+    the range defined correctly. Reuse that pattern.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>

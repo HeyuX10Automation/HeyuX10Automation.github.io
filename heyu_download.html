@@ -63,34 +63,42 @@ Janusz Krzysztofik (13):
 <tr><td><a href="/download/heyu-2.10-rc1.tar.gz">heyu-2.10-rc1.tar.gz</a>&nbsp;&nbsp;</td>
 <td>Full package with source code</td></tr>
 <tr><td><a href="/download/ChangeLog-2.10-rc1">ChangeLog-2.10-rc1</a>&nbsp;&nbsp;</td>
-<td>Full description of all changes since last release (2.9.3)</td></tr>
+<td>Full description of all changes since release 2.9.3</td></tr>
 <tr><td><a href="/download/patch-2.10-rc1.gz">patch-2.10-rc1.gz</a>&nbsp;&nbsp;</td>
-<td>All changes since last release (2.9.3) in a single patch</td></tr>
+<td>All changes since release 2.9.3 in a single patch</td></tr>
 </table>
 
-<h4 style="text-align: left;">Current Stable Release: 2.9.3</h4>
-<p>Release date: 2011-02-26</p>
+<h4 style="text-align: left;">Current Stable Release: 2.9.4</h4>
+<p>Release date: 2011-08-05</p>
 <p>List of changes:</p>
 <pre>
-Janusz Krzysztofik (5):
-	No need to read x10state file from ore_emu
-	Fix sensorfault reported tamper bit
-	Fix sensorfault reported inactivity bit
-	Stop using select() as a *sleep() replacement on linux
-	Fix dimlevel percentage calculation bug
+Janusz Krzysztofik (6):
+      Fix KAKU key range not covering key number 16
+      Use microsleep(ENGINE_POLL) instead of sleep(1)
+      Fix 'changed' handling for rain sensors
+      Allow for less frequent spool file polling
+      Fix 'Poll received unknown value' wrong byte count
+      Engine: Prevent from buffer overflows
 </pre>
 <table>
-<tr><td><a href="/download/heyu-2.9.3.tar.gz">heyu-2.9.3.tar.gz</a>&nbsp;&nbsp;</td>
+<tr><td><a href="/download/heyu-2.9.4.tar.gz">heyu-2.9.4.tar.gz</a>&nbsp;&nbsp;</td>
 <td>Full package with source code</td></tr>
-<tr><td><a href="/download/ChangeLog-2.9.3">ChangeLog-2.9.3</a>&nbsp;&nbsp;</td>
+<tr><td><a href="/download/ChangeLog-2.9.4">ChangeLog-2.9.4</a>&nbsp;&nbsp;</td>
 <td>Full description of all changes since last release</td></tr>
-<tr><td><a href="/download/patch-2.9.3.gz">patch-2.9.3.gz</a>&nbsp;&nbsp;</td>
+<tr><td><a href="/download/patch-2.9.4.gz">patch-2.9.4.gz</a>&nbsp;&nbsp;</td>
 <td>All changes since last release in a single patch</td></tr>
 </table>
 
 <h4 style="text-align: left;">Previous Releases</h4>
 
 <table>
+<tr valign="top"><td><a href="/download/heyu-2.9.3.tar.gz">heyu-2.9.3.tgz</a>&nbsp;&nbsp;</td>
+<td>Full package with source code
+(<a href="/download/ChangeLog-2.9.3">changelog</a>,
+<a href="/download/patch-2.9.3.gz">patch</a>),
+released 2011-02-26
+</td></tr>
+
 <tr valign="top"><td><a href="/download/heyu-2.9.2.tar.gz">heyu-2.9.2.tgz</a>&nbsp;&nbsp;</td>
 <td>Full package with source code
 (<a href="/download/ChangeLog-2.9.2">changelog</a>,
