@@ -40,32 +40,40 @@ Automation for Linux, Unix, and Mac OS X</h1>
 <div id="main">
 <h2 style="text-align: left;">Download Page</h2>
 
-<h4 style="text-align: left;">Current Testing Release: 2.10-rc1</h4>
-<p>Release date: 2011-02-27</p>
+<h4 style="text-align: left;">Current Testing Release: 2.10-rc2</h4>
+<p>Release date: 2011-08-07</p>
 <p>List of changes:</p>
 <pre>
-Janusz Krzysztofik (13):
-	Relay: Prevent incoming powerline signals from being destroyed by other signals
-	Cmd: Avoid hiding a CM11 message got when awaiting 0x55
-	Engine: provide check4poll() with checksums
-	Engine: use chksum_alert for all CM11 commands
-	Engine: use correct checksum with CM11 upload
-	Cmd: don't hide checksums from the engine
-	Cmd: Add distinct reporting of no checksum response
-	Cmd: Limit the wait for checksum timeout to 1 second
-	extend rcs thermostat functions
-	Stop using select() as a *sleep() replacement on linux
-	Use microsleep(ENGINE_POLL) instead of sleep(1)
-	Allow for precise dawn/dusk, night/notnight definition
-	Add support for RFXLAN, a networked RFXCOM variant
+Janusz Krzysztofik (21):
+      Relay: Prevent incoming powerline signals from being destroyed by other signals
+      Cmd: Avoid hiding a CM11 message got when awaiting 0x55
+      Engine: provide check4poll() with checksums
+      Engine: use chksum_alert for all CM11 commands
+      Engine: use correct checksum with CM11 upload
+      Cmd: don't hide checksums from the engine
+      Cmd: Add distinct reporting of no checksum response
+      Cmd: Limit the wait for checksum timeout to 1 second
+      extend rcs thermostat functions
+      Stop using select() as a *sleep() replacement on linux
+      Use microsleep(ENGINE_POLL) instead of sleep(1)
+      Allow for precise dawn/dusk, night/notnight definition
+      Add support for RFXLAN, a networked RFXCOM variant
+      Drop millisleep(10) from xread() not only on Darwin
+      Completely stop using select() as a *sleep() replacement
+      Compare RFXCOM X10 signal bursts by type, not by length
+      Use a negative value for no checksum alert
+      Fix 0xff checksum before triple 0xff mark case
+      Fix single 0xff checksum processing
+      Prevent from checksums being incorrectly recognised as events
+      Update RCS related Heyu documentation bits
 </pre>
 <table>
-<tr><td><a href="/download/heyu-2.10-rc1.tar.gz">heyu-2.10-rc1.tar.gz</a>&nbsp;&nbsp;</td>
+<tr><td><a href="/download/heyu-2.10-rc2.tar.gz">heyu-2.10-rc2.tar.gz</a>&nbsp;&nbsp;</td>
 <td>Full package with source code</td></tr>
-<tr><td><a href="/download/ChangeLog-2.10-rc1">ChangeLog-2.10-rc1</a>&nbsp;&nbsp;</td>
-<td>Full description of all changes since release 2.9.3</td></tr>
-<tr><td><a href="/download/patch-2.10-rc1.gz">patch-2.10-rc1.gz</a>&nbsp;&nbsp;</td>
-<td>All changes since release 2.9.3 in a single patch</td></tr>
+<tr><td><a href="/download/ChangeLog-2.10-rc2">ChangeLog-2.10-rc2</a>&nbsp;&nbsp;</td>
+<td>Full description of all changes against release 2.9.4</td></tr>
+<tr><td><a href="/download/patch-2.10-rc2.gz">patch-2.10-rc2.gz</a>&nbsp;&nbsp;</td>
+<td>All changes against release 2.9.4 in a single patch</td></tr>
 </table>
 
 <h4 style="text-align: left;">Current Stable Release: 2.9.4</h4>

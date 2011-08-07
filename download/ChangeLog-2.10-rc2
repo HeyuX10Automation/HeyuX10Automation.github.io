@@ -1,0 +1,469 @@
+commit 56a8969c877d2c449573141bf4b83a271120eb7a
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Sun Aug 7 12:37:53 2011 +0200
+
+    Heyu 2.10-rc2
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 55c653c93ab1ae0d6d11f76a29e7d16f1cf87114
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Sun Aug 7 12:42:11 2011 +0200
+
+    Update RCS related Heyu documentation bits
+    
+    RCS support in Heyu has been extended by [[revision:187d0e4c33]]
+    without manual page being updated. Fix this.
+    
+    Fixes #5
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit acb1dd15dd3fcb913c929b4bea96edd544f6151a
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Sun Aug 7 12:39:24 2011 +0200
+
+    Prevent from checksums being incorrectly recognised as events
+    
+    It may happen that a checksum value can match one of special bytes used
+    by the CM11A interface to signal events to the user. Since commit
+    2cd54bdeb9, "Engine: use chksum_alert for all CM11 commands", some of
+    these values may be never recognized as checksums, resulting in the
+    engine incorrectly interpreting the data stream.
+    
+    Fix this issue by moving checksum matching in front of any other
+    matching of bytes received.
+    
+    Fixes #10
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 26e01ea051326de7134dffd9cf5532a8862e316d
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Sun Jul 31 00:44:49 2011 +0200
+
+    Fix single 0xff checksum processing
+    
+    Since 0xff bytes found in the spool file are first tried to be collected
+    to a potential triple 0xff seqence, a 0xff checksum is never passed like
+    other values to the input parsing procedure, but ends up being indicated
+    with the non-zero was flag. Then, it must be processed applying any
+    common checksum detection rules, otherwise single bytes following every
+    0xff checksum may always get missed.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 95666c42c1b5da725227b5cc7d36cfd72f6ab755
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Sat Jul 30 23:52:38 2011 +0200
+
+    Fix 0xff checksum before triple 0xff mark case
+    
+    It may happen that a checksum of the 0xff value is received from the
+    CM11A just before a triple 0xff sequence indicating an outgoing command
+    or an RF signal or whatever else is appended to the spool file. In this
+    rare case, the fourth 0xff detected is treated as incorrect sequence
+    length, resulting in the whole sequence being miss-interpreted and the
+    just missed checksum still expected to be catched.
+    
+    Detect this condition and process correctly, invalidating the expected
+    checksum value and processing the remaining triple 0xff initiated
+    sequence.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 41725e5abbc04a36a4a3c18ebd20c17ea7e71325
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Thu Jul 7 19:50:06 2011 +0200
+
+    Use a negative value for no checksum alert
+    
+    Originally used only for recognising 0x5a checksums from 0x5a poll
+    requests, the chksum_alert variable initial value of 0 had been chosen
+    as no checksum (0x5a) expected indication. However, since commit
+    2cd54bdeb989c8f39ea6a96a6d2706bf88811ed5, "Engine: use chksum_alert for
+    all CM11 commands", this is no longer true. The variable can happen to
+    be filled with a legal checksum value of 0 as well, which could result
+    in misinterpretation of the spool data stream and still end up with the
+    infamous "Poll received unknown value ..." message.
+    
+    Since the chksum_alert is already declared as a signed integer, use
+    a negative value for indicating no checksum expected instead of 0.
+    
+    Created against Heyu 2.10-rc1.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit a65f3b9a1a0fbad599f4b528a0f6ddce2f4f10be
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Tue Jul 12 03:03:10 2011 +0200
+
+    Compare RFXCOM X10 signal bursts by type, not by length
+    
+    I've discovered an oddity in RFXCOM data processing which results in
+    random X10 RF signals happening to be reported more than once. After
+    more thorough investigation I've found that single X10 RF bursts can
+    happen to be decoded and reported by the RFXCOM receiver in a slightly
+    different way than other bursts of the same signal. This can be caused
+    by noise, but I suspect this may also have something to do with new
+    RFXCOM firmware, capable of decoding still more and more signal types,
+    which may lead to less restrictive noise filtering.
+    
+    The content of such distorted bursts is still correct, but they are
+    reported to Heyu as being longer than others by 1 bit. While Heyu still
+    recognises them as valid X10 RF transmissions, comparing them with other
+    bursts by their length fails, which results in reporting them as
+    separate signals. If compared by their type instead, they no longer
+    cause multi-bursts series being broken into separate signals.
+    
+    I've implemented this fix for both current shared receive queue, and
+    a work in progress separate receive queues code paths.
+    
+    Created and tested against Heyu 2.9.3.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit d1eaea7cf2085a3bca0225c6b88e463bc7e75352
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Sun Jul 10 19:12:29 2011 +0200
+
+    Completely stop using select() as a *sleep() replacement
+    
+    It looks like previous changes towards using the locally defined,
+    portable microsleep() function instead of select() (commits 716ffb5887,
+    "Stop using select() as a *sleep() replacement on linux" and 027db5f4cd,
+    "Use microsleep(ENGINE_POLL) instead of sleep(1)") have been confirmed
+    working correctly on Linux. I expect microsleep() doing its job
+    correctly on other platforms as well, so decided to completely get rid
+    of that hardly legal use of select().
+    
+    Created against Heyu 2.10-rc1.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 5461658d800667fbb3d5311a6b8fa9f5eced5c81
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Sun Jul 10 19:13:49 2011 +0200
+
+    Drop millisleep(10) from xread() not only on Darwin
+    
+    Commit 6352911c20, "Fix selected Heyu commands waiting forever on
+    Darwin", removed a millisleep(10) call from internal loop of xread()
+    when built for Darwin. Since there were no reports about more excessive
+    load then before on Darwin after this change, and it looks like the
+    spool file, from which the xread() is fetching data, is always open in
+    blocking mode, preventing read() calls from returning immediately if no
+    data and the xread() internal loop from spinning, let's try dropping
+    that millisleep(10) completely.
+    
+    Created against Heyu 2.10-rc1.
+    Tested on linux.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 6c656122de401b317cf5b7a051a4d583e1e6e041
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Sun Feb 27 19:31:02 2011 +0100
+
+    Heyu 2.10-rc1
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 1d3588ba4af168185021cf71a8743df84d1c3401
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Tue Feb 15 01:36:33 2011 +0100
+
+    Add support for RFXLAN, a networked RFXCOM variant
+    
+    This patch extends Heyu with the ability to talk to a networked
+    version of the RFXCOM RF receiver, named RFXLAN. There should
+    be no differences in how both device variants provide Heyu with
+    RF signals coming from various Heyu supported RF sensors.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 19438693cd1614f3ebac43ed2e4a36b939390c9d
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Feb 7 19:14:13 2011 +0100
+
+    Allow for precise dawn/dusk, night/notnight definition
+    
+    There was a Heyu configuration directive DAWNDUSK_DEF which allowed
+    for selecting one of four fixed dawn/dusk definitions: Sunrise/Sunset,
+    Civil Twilight, Nautical Twilight or Astronomical Twilight. Those were
+    mapped directly into the dawn/dusk+-nn time specifiers used in the
+    Heyu uploaded schedule timers, as well as the night/notnight global
+    flags maintained by the Heyu engine and their derivative $X10_DawnTime,
+    $X10_DuskTime and $X10_isNightTime environment variables.
+    
+    There was also an ISDARK_OFFSET configuration directive that allowed
+    for specifying time offsets for another pair of the Heyu engine
+    maintained global flags, dark/notdark, and their derivative
+    $X10_isDarkTime environment variable, relative to the dawn/dusk times.
+    
+    Due to low resolution of the dawn/dusk possible selections, the
+    DAWNDUSK_DEF configuration option was probably hardly used. Instead,
+    users tended to place requests for another *_OFFSET option in order
+    to have two actually usefull pairs of dark/notdark like global flags.
+    
+    With this patch applied, users should now be able to define their
+    preferred dawn/dusk times very precisely, relative to the Sun position
+    at their locations. The night/notnight pair of flags should then
+    become more usefull, hopefully providing a replacement for a second
+    dark/notdark.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 027db5f4cd280c155c8aefc0fe905e3c419a55fb
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Wed Dec 15 17:11:34 2010 +0100
+
+    Use microsleep(ENGINE_POLL) instead of sleep(1)
+    
+    Now that we stopped using select() as a *sleep() replacement on linux,
+    both the Heyu engine and monitor fall back to polling the spool file
+    once a second while idle, irrespective of the ENGINE_POLL value, either
+    default or redefined in an x10config file.
+    
+    In order to keep the ENGINE_POLL directive effective on linux, replace
+    the fallback arbitrary sleep(1) with an already defined custom
+    microsleep() function call, which is supposed to be portable.
+    
+    This should make the ENGINE_POLL being respected on other platforms
+    as well, which have never been build with HASSELECT defined.
+    
+    Created and tested against heyu-2.9.2.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 82c21e413300ece82b2b7f2d22ec3e5523d62246
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Wed Dec 15 17:11:34 2010 +0100
+
+    Stop using select() as a *sleep() replacement on linux
+    
+    It has been prooved that using select() as a replacement for a *sleep()
+    while looping through the spool file monitoring functions c_engine() and
+    c_monitor(), may cause a not yet clearly understood problem to occure
+    when running on a relatively recent GNU/Linux platform, like Fedora 13.
+    
+    Don't define HASSELECT for linux any more.
+    
+    Created and tested against heyu-2.9.2.
+    
+    Reported-by: ccataldo@cox.net
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 187d0e4c33621ea227369545f9cedc31eef66bd8
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Wed Dec 1 20:07:33 2010 +0100
+
+    extend rcs thermostat functions
+    
+    With this patch applied, Heyu should try to decode and display three
+    more message types that can preceed temperature data reports: "Outside
+    Temperature", "Heat Setpoint" and "Cooling Setpoint". These labels
+    should be displayed in both the Heyu monitor output as well as the Heyu
+    engine log, but not from the rcs_req command line (only the temperature
+    is displayed if received on time, like it was before).
+    
+    Reported-by: Brandt Daniels <PompRocker@aol.com>
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 14176c81d0d46cb4cbb7c2715a4722db621a6e72
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Sun Aug 15 23:06:22 2010 +0200
+
+    Cmd: Limit the wait for checksum timeout to 1 second
+    
+    In the current send_buffer() implementation, used for sending out powerline
+    signals from a command line, the same timeout value of 10s, as forced by the
+    calling functions, is used when waiting for both a checksum and READY
+    response.
+    
+    It has been observed that a checksum response is either received immediatelly
+    or not at all. Then, waiting for 10 seconds seems useless, and even harmfull
+    since a heyu write lock is kept, preventing other commands from being run.
+    
+    The patch limits the wait for checksum timeout to 1 second, that seems way
+    enough.
+    
+    Created and tested against heyu-2.9.0.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 58ccc4366e044a8daf2f3be9639594f4c71ad215
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Sun Aug 15 23:04:02 2010 +0200
+
+    Cmd: Add distinct reporting of no checksum response
+    
+    In the current send_buffer() implementation, used for sending out powerline
+    signals from a command line, if a wait for checksum timeout occures, it is not
+    reported, even in verbose mode, other than incorrectly as a wrong checksum.
+    This could effectively hide this potential source of other heyu problems,
+    like "Unable to lock ..." events, from users and developers attention for
+    years.
+    
+    This patch adds a distinct warning message in order to get users and
+    developers attention to these rare, but harmful events. To not force users
+    runnig commands in verbose mode, the events are reported unconditionally to
+    the syslog as well.
+    
+    Created and tested against heyu-2.9.0.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 571e23d7563576b8d8c832709f1411fe561d09b4
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Tue Nov 16 16:43:03 2010 +0100
+
+    Cmd: don't hide checksums from the engine
+    
+    Using exread() for marking checksums to be recognized and ignored by the
+    engine proved to be very error prone. Now that we have teached the engine to
+    recognize checksums even if not marked, we can drop using this problematic
+    function in favour of a simple xread(), that is free of similiar issues.
+    
+    This patch replaces exread() with xread() inside the send_buffer(), used by
+    heyu commands, when reading checksums from the spool file.
+    
+    Initially created against heyu-2.3.0 and tested extensively since then. While
+    corrected the core problem, it introduced a harmless side effect of
+    dummy "Poll received unknown value ..." error messages acompanying every
+    checksum.
+    
+    This version, refreshed against 2.9.0, applies and compiles on top of the
+    former patch, Cmd: Avoid hiding a CM11 message got when awaiting 0x55,
+    (http://tech.groups.yahoo.com/group/heyu_devel/message/4)
+    
+    Should work correctly, without the side effects mentioned, when used on top
+    of the other 3 patches from this series.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 51c071eb3d03fef91758030c21df470ca5949e6c
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Aug 16 17:44:02 2010 +0200
+
+    Engine: use correct checksum with CM11 upload
+    
+    The identify_sent() provided checksums are incorrect in case of CM11 upload
+    commands.
+    
+    Since correct upload checksums are already calculated inside
+    translate_other(), which is called from check4poll() for every upload command,
+    we can obtain correct upload checksums by extending the translate_other()
+    function API, as we already did to identify_sent() for use with other CM11
+    commands.
+    
+    The patch implements this idea.
+    
+    Created and briefly tested against heyu-2.9.0 on top of patch 2/4.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 2cd54bdeb989c8f39ea6a96a6d2706bf88811ed5
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Aug 16 17:32:58 2010 +0200
+
+    Engine: use chksum_alert for all CM11 commands
+    
+    To prevent the engine from displaying the "Poll received unknown value ..."
+    message when a raw checkum byte is read from the spool file, store a checksum
+    calculated for a CM11 command in the chksum_alert variable, which is then used
+    for matching expected checksum bytes. IOW, reuse the already implemented
+    chksum_alert algorithm for matching all outgoing CM11 command checksums.
+    
+    Created and briefly tested against heyu-2.9.0 on top of patch 1/4.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit ca9184c2f4fdfb9f8231023c261c934d3ad42774
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Aug 16 17:29:48 2010 +0200
+
+    Engine: provide check4poll() with checksums
+    
+    In order to teach the engine how to recognize checksum bytes related to
+    outgoing CM11 commands, including powerline signals, found in the byte stream
+    read from the spool file, the check4poll() function must get access to
+    checksum values calculated for the relevant command sequences.
+    
+    This patch allows for this by modifying the API of the identify_sent()
+    function, called by the check4poll(), adding a checksum, that is already
+    computed inside the identify_sent() body, to the list of its returned
+    variables.
+    
+    Created and briefly tested against heyu-2.9.0.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit c971e6386e3a754034f3d295387cca87bd1d711d
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Sun Aug 15 20:16:44 2010 +0200
+
+    Cmd: Avoid hiding a CM11 message got when awaiting 0x55
+    
+    Current send_buffer() routine, used by heyu command line for sending out
+    powerline signals, tries to mark hidden all responses expected from the CM11
+    during X10 signal submission, in order to prevent the heyu_engine from
+    interpreting them as parts of incoming transmissions. There are two such
+    responses expected: a checksum, and finally the READY byte (0x55).
+    
+    If it ever happens that an incomming signal is received during the send out
+    procedure, a poll request byte (0x5a) can be received instead of the expected
+    checksum or READY. Then, this 0x5a byte gets marked hidden instead of the
+    expected one, effectively destroing full incoming powerline sequence (0x5a
+    + the sequence) and preventing it from being recognized correctly by the
+    heyu_engine. As a result, the incoming powerline signal gets lost, and the
+    infamous "Poll received unknown value ..." message appears instead.
+    
+    This patch tries to correct the problem in case of incoming signal
+    transmission received instead of expected READY. This can be done by simply
+    not marking the expected 0x55 as hidden, since the engine is prepared for
+    interpreting it correctly as a READY response. Then, any different byte
+    received instead won't get marked as hidden as well and can be interpreted
+    correctly by the engine.
+    
+    This is achieved by using xread(), that simply reads a response from the spool
+    file, instead of the exread(), that starts with putting a "hidden" mark into
+    the spool file, then calls xread().
+    
+    Unfortunatelly, this simple solution can't be used for correcting the problem
+    in case of an incomming transmission received instead of checksum (actually,
+    I have been using this method for several months, accepting false "Poll
+    received unknown value ..." messages appearing in my log for every correct
+    checksum received). An alternative solution has to be worked out.
+    
+    Initially created against heyu-2.3.0 and tested extensively since then. The
+    herewith submitted version has been refreshed against heyu-2.9.0.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 8c5e0e64e3ad86ff5f176c787803fecc00a1d5e8
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Sun Aug 15 18:58:54 2010 +0200
+
+    Relay: Prevent incoming powerline signals from being destroyed by other signals
+    
+    In its current form, the heyu_relay puts an incomming poll request (0x5a) byte
+    and a following signal(s) byte sequence into the spool file in two separate
+    write() calls. Since this procedure doesn't respect spool file locks, it may
+    happen that another signal, whether a command line, heyu_aux or whatever its
+    source can be, gets inserted into the spool file inbetween, effectivelly
+    destroying the full byte sequence required by the heyu_engine to actually
+    recognize an incomming signal(s) sequence. This results in powerline signals
+    happening to get lost, with the infamous "Poll received unknown value ..."
+    error message being displayed.
+    
+    This patch tries to correct the problem by first collecting the whole
+    sequence, consisting of one poll request (0x5a) byte and a subsequent
+    incomming command(s) bytes, and then putting it into the spool file with one
+    atomic write() call.
+    
+    I have initially created this patch against heyu-2.3.0 and tested extensively
+    since then. The below version is refershed against current official release
+    (2.9.0).
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
