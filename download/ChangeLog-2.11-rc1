@@ -1,0 +1,901 @@
+commit a3519f49dcb7951deae85fc89ce09f959254f030
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Thu May 17 18:06:42 2012 +0200
+
+    Heyu 2.11-rc1
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit d6e224520cdce231e198d142b8927b92dbebf7c5
+Merge: 5a13e34 92aa0d6
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Thu May 17 20:29:11 2012 +0200
+
+    Merge branch 'for-next' into testing
+
+commit 92aa0d67ad4abcf6aea3ceaa164fd1a55a18ddde
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Sun Nov 27 22:13:21 2011 +0100
+
+    Add new state function for examining stored date/time data
+    
+    For those who may wish to examine those values, in native UNIX
+    date/time format, from an external application.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 5fe373b2d2f99a0975b71a5d194df4b86573a794
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Sun Nov 27 22:09:54 2011 +0100
+
+    Include stored date/time data in 'show oregon' output
+    
+    This is probably of minor usability, but once already stored, show this
+    data as well.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit c57db26b74359480e58f53efe38a16e12121ad23
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Sun Nov 27 22:06:51 2011 +0100
+
+    Pass stored date/time values to Heyu scripts
+    
+    Useful or not, pass already stored date/time sensor data to Heyu
+    scripts over environment variables named after usual Heyu conventions.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 4e7af48cefac26525b1e5a4be24d392c90730b02
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Sun Nov 27 22:02:49 2011 +0100
+
+    Implement 'not changed' condition for oreDT signals
+    
+    The 'changed' launch flag is calculated based on stored dated/time
+    value captured from the last signal considered 'changed', and an
+    arbitrary precision, configured with an x10config directive.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit c9649115132464b6f603df65f548c9e945f84d14
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Sun Nov 27 21:56:37 2011 +0100
+
+    Implement oredt function to be used in launch conditions
+    
+    To avoid launching scripts unintentionally on random X10 signals
+    carrying the same Hu as an Oregon Date/Time sensor uses, provide a new
+    function to be used in launch conditions in place of 'anyfunc' for
+    exact matching of date/time signals.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 4ec5d0984c029e08595d9ef32924f5688b433187
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Sun Nov 27 21:52:56 2011 +0100
+
+    Pass date/time data from Oregon DT sensors to Heyu scripts
+    
+    Convert date/time data just received from a sensor to UNIX time format
+    and pass it to Heyu script(s) with matching launch condition over a new
+    X10_oreDT environment variable.
+    
+    As there is no oreDT signal specific function implemented yet to be
+    used in launch conditions, a script supposed to examine the new
+    environment variable must be launched with a 'HU anyfunc' launcher for
+    now.
+    
+    The date/time data is not stored for future use, as it gets outdated
+    immediately and seems useless except for when just received.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit f28f355355723be2f90b53db3ca7839fff20e380
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Sun Nov 27 21:17:50 2011 +0100
+
+    Fix ORE_DT1 battery status mode
+    
+    From what Heyu monitor and engine report about ORE_DT1 signals, it
+    looks like an initial guess about a battery status reporting mode of
+    this module type was wrong. Try using the same battery mode as used by
+    the ORE_TH3 module, which represents the RTGR32N Temperature/Humidity
+    sensor part.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 3893916dd6d13507fda0f5ed01d82793c73108df
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Tue Nov 29 02:20:52 2011 +0100
+
+    Fix ORE_DT1 double burst transmissions reported twice
+    
+    Date/time signals from Oregon RTGR328N radio clocks are transmitted as
+    two consecutive bursts. Since the precision used is high, they differ
+    by a small amount of time. If both are received, this results in both
+    detected as carrying different data, and reported twice as two separate
+    signals.
+    
+    Suppress reporting of the second one received in a row.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 6584775b9d2b1c2b5287139fbfbd627376d3ee5c
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Sun Nov 27 22:43:17 2011 +0100
+
+    Add support for decoding ORE_DT1 signals
+    
+    With this patch applied, users should be able to declare an ALIAS for
+    the radio clock part of their RTGR328N sensors. Then, signals so far
+    appearing as ORE_DT1 RFdata should be now reported as oreDT, with date
+    and time values, as well as battery status, decoded from the signal
+    contents.
+    
+    Decoding algorithm is based on information kindly provided by RFXCOM.
+    
+    The ORE_DT1 model has been implemented as providing only one function,
+    date and time, not two, as the device description record found in
+    oregon.c might suggest. The corresponding record field has been fixed.
+    
+    Common Oregon sensor handling code (battery status, etc.) has been
+    copy-pasted from other Oregon sensors code. Model specific bits have
+    been moved to separate functions for easier maintenance.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 9f30571f4c0029cdb4a0b4153662ac4fec4e361d
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Sun Aug 28 13:36:07 2011 +0200
+
+    Fix ID code handling of ORE_DT1 type sensors
+    
+    Both functions of the Oregon RTGR238N device, i.e. temperature/humidity
+    sensor and radio clock, send independent signals, but share the same RF
+    transmitter, resulting in both signal types carrying the same device
+    ID code. This makes it not compatible with Heyu basic sensor model,
+    which is expected to either send all device data in single
+    transmissions, or use distinct ID codes for separate (sub)devices.
+    
+    Fortunately, support for sharing an Oregon transmitter ID code by more
+    than one subdevice has already been implemented for the WTGR800 weather
+    sensor. Alter the ORE_DT1 definition to also use this feature.
+    
+    With this patch applied, ORE_DT1 type signals should now be recognised
+    as carrying the transmitter ID code incremented by 1.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit ce2d6d104a09281a8ecf0052384de57753c19b75
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Aug 29 00:00:19 2011 +0200
+
+    Enable detection of Oregon RTGR328N radio clock signals
+    
+    Very basic support, which would allow Heyu to recognise signals from
+    Oregon RTGR328N sensors' integrated radio clocks, existed already in
+    the code, but hadn't been activated. Mark the model as being supported
+    and move its description out of unsupported sensors list.
+    
+    With this patch applied, both Heyu engine and monitor should report
+    date/time signals as RFdata coming from ORE_DT1, and not RFnoise as
+    before.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit a016a2d795eae03979f39a0a23a8244cc27a28c7
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Sep 5 00:01:12 2011 +0200
+
+    Use separate queues for RFXCOM receiver modules
+    
+    Without this feature, multiple bursts of two signals received with both
+    modules simultaneously (on different carrier frequencies - 310MHz vs.
+    433.92 MHz) tend to be reported by the Heyu AUX relay more than once,
+    regardless of the AUX_REPCOUNTS x10config directive <MIN> and <REPEAT>
+    settings, which are intended to prevent from such unwanted signal
+    repetitions.
+    
+    This feature had been implemented still by Charles, but the new code
+    path was never activated due to problems with older RFXCOM firmware
+    versions that exhibited themselves with this change and prevented it
+    from being tested successfully. Since I've upgraded my RFXCOM modules
+    recently, I've been finally able to verify that the new code works
+    correctly, at least for me.
+    
+    For now, the feature can be activated with a new option to ./Configure,
+    "--enable-rfxdual". If there are no bug reports against it, it will be
+    enabled by default, and the old code path probably removed from future
+    Heyu releases. Then, only the ./Configure help is updated, with INSTALL
+    and README.INSTALL left unchanged.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit ca8dbe6745751e7db2f27c22d3ada9175af30aef
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Aug 22 10:33:07 2011 +0200
+
+    Provide advanced installation instructions
+    
+    For those who no longer wish to use the Heyu traditional Configure.sh
+    script, advanced information is provided on how to configure and
+    install the package using standard Autoconf options passed to
+    ./configure.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit d74a9ec85a7bce1369b05be73dc8ef865ae8abdf
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Aug 22 10:30:15 2011 +0200
+
+    Drop no longer required call to autoreconf from Configure.sh
+    
+    After we have introduced all files required to configure and build Heyu
+    with no Autoconf nor Automake packages installed, these is no longer
+    any need for checking for their existence and calling autoreconf from
+    Configure.sh. Drop it.
+    
+    BTW, the resulting Makefile can now take care of re-calling Autoconf or
+    Automake tools in case of configure.ac or Makefile.am local changes.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 7440ce784374e8b473e726a221e09d8c05f08bc4
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Jan 2 21:58:21 2012 +0100
+
+    Add autoreconf generated and installed files
+    
+    To allow for configuring and building Heyu without Autoconf and
+    Automake packages installed, provide all required files, both generated
+    automatically from configure.ac and Makefile.am, as well as copies of
+    those distributed and installed with automake.
+    
+    Add AC_PROG_INSTALL to configure.ac checks for programs, as suggested
+    by autoscan, re-run after autoreconf.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 7f1a1a9fa3bbf28297715020e334204971538420
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Aug 22 11:15:35 2011 +0200
+
+    Introduce ./configure based installation instructions
+    
+    Replace custom INSTALL file with Automake provided generic version,
+    applicable for any package supplied with Autoconf ./configure script.
+    
+    Move over the old Heyu version 1 README file to README1, then rename
+    the old INSTALL to README, which is mentioned in the generic INSTALL as
+    providing package specific installation instructions.
+    
+    Drop README.INSTALL copy - INSTALL is now safe from being overwritten
+    by the make implicit rules with the contents of install.sh, already
+    renamed to post-install.sh.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit aebb30af433d47e9579f374017d68720ebbd60c4
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Aug 22 12:54:00 2011 +0200
+
+    Don't duplicate package version definition
+    
+    After switching to Automake, another VERSION symbol definition has been
+    added automatically to config.h, based on configure.ac provided data.
+    Add RELEASE_DATE definition to configure.ac as well and drop version.h
+    file from the distribution to avoid mismatches.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 5f72304cf2f4fd4342619145ab06e564de15089c
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Sun Aug 21 16:53:25 2011 +0200
+
+    Move SCO detection and symbol definition to configure.ac
+    
+    Since SCO macro is used for conditionally defining other symbols in
+    different source files, we should better keep it, but still migrate
+    to Autoconf.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 43bdbcf61efc2a81999691c6e271c81fbce63e85
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Aug 22 10:20:15 2011 +0200
+
+    Switch over to using Automake
+    
+    After all recent changes, it should be now possible to configure, build
+    and install Heyu using an Automake generated Makefile.in. The Automake
+    initialization directive has been uncommented in configure.ac, and
+    calls to autoconf and autoheader replaced with autoreconf in
+    Configure.sh.
+    
+    To give it a try, just install an Automake package in addition to
+    Autoconf and follow the Heyu installation procedure as usually.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit ca2fc9879d49c080b9ab850e0a60f67d0bb111fd
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Aug 22 12:10:34 2011 +0200
+
+    Call install.sh from 'make install' only if requested
+    
+    Extend configure with an option for conditionally calling the Heyu
+    custom install.sh script during the install phase. This will allow
+    binary package maintainers to use most of the Heyu build system
+    without being forced to follow custom install steps which may not
+    match their preferences.
+    
+    While being at it, change the script name to post-install.sh before
+    a naming conflict during the upcoming switchover to Automake arises.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 7f7fbd9006ca027d0a750da2cb84f5cc3ec8da12
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Fri Aug 19 20:32:52 2011 +0200
+
+    Keep default ownership of installed binary
+    
+    Since Heyu is installed with neither setuid, setgid nor restricted
+    access permissions, there should be no point in setting specific user
+    and group ownership of the installed binary. Drop this.
+    
+    Once done, also drop completely config.mk handling, which would now
+    contain nothing but comments.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 3b410ebd561d50ed67ebd9944ae6795f8be4fa6a
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Aug 22 12:30:57 2011 +0200
+
+    Move target directories selection to Autoconf
+    
+    Instead of putting hardcoded target directory names to ./Configure.sh
+    created config.mk, allow for Autotools methods being used.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 6f2ac020b48063de38ec3eb657041347f6148160
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Fri Aug 19 19:55:06 2011 +0200
+
+    Link with Autoconf selected libraries
+    
+    Instead of specifying a list of libraries to link the Heyu binary with,
+    depend on Autoconf library detection features.
+    
+    Since libucb, libgen and libcmd libraries, supposed to be required on
+    the ATT SVR4 platform, are not supported by configure.ac, I've left
+    them specified explicitly, but passed to ./configure to be substituted
+    from Makefile.in instead of hardcoded into config.mk.
+    
+    No changes to Makefile.am required.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 80076598b432471de5247d3429aa655d20734e50
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Aug 22 10:09:57 2011 +0200
+
+    Pass linker options through Autoconf
+    
+    Pass system dependent linker options to ./configure using LDFLAGS
+    variable, to be substituted during Makefile.in processing, instead of
+    placing them into config.mk from ./Configure.sh.
+    
+    No changes to Makefile.am required.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 14866f5feec615ad9791be795e07dbfa59ca7bf3
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Aug 22 10:09:15 2011 +0200
+
+    Use Autoconf detected compiler program name and options
+    
+    Instead of selecting a compiler program and its options based on
+    ./Configure.sh detected system type, and putting that into config.mk,
+    substitute Autoconf detected values while creating a Makefile from
+    Makefile.in.
+    
+    If gcc compiler is detected and no CFLAGS have been provided to
+    ./configure, append '-Wall' to Autoconf selected CFLAGS.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit e91a5c8bc0aa990c5f070048deef3ab65f207efd
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Fri Aug 19 19:35:57 2011 +0200
+
+    Move preprocessor options from CFLAGS to CPPFLAGS
+    
+    A few remaining -D<symbol> and -I<directory> flags belong to CPPFLAGS
+    rather than CFLAGS. Move them.
+    
+    Moreover, the Autoconf manual states that compiler flags used in more
+    than one compiler phase should be put either into CC directly, or into
+    both CPPFLAGS and LDFLAGS but not into CFLAGS. The -posix flag
+    (nextstep case) is already placed in LDFLAGS, so use the latter option
+    for moving it out of CFLAGS.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit a9348415f8afafd76e969c0c86361f30a868fce3
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Aug 22 10:07:44 2011 +0200
+
+    Pass runtime directory locations through Autoconf
+    
+    Instead of overriding default runtime directory locations by hardcoding
+    them into CFLAGS placed in Makefile.top from ./Configure.sh, pass them
+    to Makefile through Makefile.in substitutions using --prefix,
+    --sysconfdir and --localstatedir ./configure options, possibly
+    overridden with CPPFLAGS passed to ./configure if required.
+    
+    Default SYSBASEDIR, where Heyu looks for a system-wide x10config, is
+    derived from SYSCONFDIR, either by appending '/heyu' to it, or using it
+    directly if already contains 'heyu' in its path. Default LOCKDIR and
+    SPOOLDIR locations are relative to LOCALSTATEDIR.
+    
+    Nothing to be added to Makefile.am, Automake can take care by itself
+    for proper Makefile.in contents based on configure.ac.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit f40a8faeb58a1817345f34e2864b069f0f403354
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Jan 2 21:00:25 2012 +0100
+
+    Introduce Automake source configuration file
+    
+    A new file, Makefile.am, with a basic contents has been created in
+    preparation for switching over to Automake. Before this happens, any
+    changes to Heyu build time configuration and building procedure will
+    be introduces into both this file and the old Makefile.in.
+    
+    Once used, this Makefile.am should allow for building and installing
+    Heyu binary and manual pages into Heyu default locations if so selected
+    with Autoconf --prefix, --exec-prefix, --bindir, --mandir and/or
+    --localstatedir options passed to configure. Additionaly, extra
+    documentation files should be installed into Autoconf selected DOCDIR,
+    and sample configuration files into SYSCONFDIR/heyu (or SYSCONFDIR if
+    already contained 'heyu' in its path).
+    
+    Automake activation directive has been added to the Autoconf source
+    file, but left commented out for now to protect the old Makefile.in we
+    are still usnig from being overwritten.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit d152e9b01d6a7084bd2534168bb7d71432baeb10
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Aug 22 10:05:44 2011 +0200
+
+    Let Autoconf create Makefile from Makefile.in
+    
+    Further migration to Autotools requires activation of Makefile auto-
+    generation feature of Autoconf, with Makefile.in serving as a template.
+    
+    Instead of creating the top of Makefile by Configure.sh script and
+    appending its bottom directly from Makefile.in, put the top into a
+    separate config.mk file and include it from the Makefile.in. Then,
+    allow configure to create a Makefile from the Makefile.in template.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 884184639494b267539e15a2a553c267b745c784
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Aug 22 10:01:31 2011 +0200
+
+    Replace custom VOID symbol with Autoconf equivalent
+    
+    From Configure.sh:
+    #       set DFLAGS equal to:
+    #          -DVOID       if compiler doesn't understand 'void'
+    Form x10.h:
+    /* Some lints don't know about the void type */
+    #ifdef VOID
+    #define void int
+    #endif
+    
+    Use Autoconf to detect if void type is valid instead of instructing
+    users to define a symbol if it's not.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 8e51c224861be79937dce0bc44f9453b6116dcdc
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Aug 22 11:01:35 2011 +0200
+
+    Delegate flags/counters/timers Configure.sh setup to Autoconf
+    
+    The number of user flags, counters and timers can also be put into
+    config.h using standard Autoconf methods. Use this instead of the
+    ./Configure.sh setting up the Makefile to pass them as compiler
+    options.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 01215323ead1b068041211912ffea249779473f0
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Aug 22 10:47:55 2011 +0200
+
+    Add Autoconf support to recent RFXLAN related code additions
+    
+    RFXLAN support, which depends on header files and library functions not
+    used before, had been added to Heyu before Autoconf support has been
+    implemented, so it may break the code portability. This patch extends
+    Autoconf support over the RFXLAN bits. If a header file or a function
+    definition required by the RFXLAN related code is missing, this
+    functionality will be omitted from the binary.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 6f95e01d890a7724eeac9ca05503eb12de06f0cd
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Sat Aug 6 14:03:05 2011 +0200
+
+    Replace custom POSIX symbol with unistd.h provided _POSIX_VERSION
+    
+    Instead of passing a custom POSIX macro definition to compiler, check
+    for _POSIX_VERSION macro, which should be defined on POSIX systems when
+    <unistd.h> is included.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 77934742d55d1226d716df96ed4d31898bf2bb9d
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Aug 22 09:58:39 2011 +0200
+
+    Check for struct termios/termio instead of custom defined symbols
+    
+    In the current Heyu code, system dependent paths in tty setup/cleanup
+    procedures are chosen based on SYSV and/or POSIX macros provided by
+    ./Configure.sh. However this can be done with help of autotools tests
+    for particular structure type definitions presence. So, take the former
+    POSIX path if "struct termios" type is recognised, or the former SYSV
+    path if "struct termio" can be used, otherwise use "struct sgtty".
+    
+    Once done, drop no longer used SYSV macro definition from
+    ./Configure.sh.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit f52f6ed4ba5c0c86f56828a4291ab655c6352b47
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Aug 22 09:57:11 2011 +0200
+
+    Delegate -no<feature> Configure.sh switch processing to Autoconf
+    
+    Autoconf provides a standard mechanism for including/excluding parts of
+    source code which provide optional features by means of --enable/
+    --disable command line options to ./configure. Make use of this feature
+    instead of keeping the feature switch processing handled by
+    ./Configure.sh.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit a603b8f691c7c014772ba029754cb0f853fefae6
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Sat Aug 6 13:00:12 2011 +0200
+
+    Fix problematic conditional build directives
+    
+    Replace unfortunate "#if HAVE_<feature>" directives with probably
+    intended "#ifdef HAVE_<feature>" forms, or compilation may break if
+    ./configure defines a HAVE_<feautre> but empty.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit da71e00032700816ee0585a16935b79cdd7a12a0
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Tue Aug 16 21:31:28 2011 +0200
+
+    Replace HAS* macro names with more common HAVE_* forms
+    
+    Autoconf convention used while naming macros is to start them with a
+    HAVE_ prefix, not HAS as in the current Heyu sources. Rename compile
+    time configured feature macros using HAVE_FEATURE_ prefix before moving
+    with their handling to Autoconf.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit b7769a53a4794d29bf6ffcc16884b198e095fe71
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Tue Aug 16 21:06:24 2011 +0200
+
+    Use S_ISDIR macro if defined, not limited to POSIX
+    
+    S_ISDIR is a macro which presence can be tested with #ifdef, so no need
+    to depend its use on POSIX being defined.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 5b7e55ffb57f27c7ae344cecd13066e82c5884da
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Sat Aug 6 04:07:34 2011 +0200
+
+    Drop unused NEEDGTIME macro
+    
+    It's not used throughout the sources, so shouldn't be needed.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 8bf5a1e7895ae9c2b1effde2802af54938f9e7fb
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Aug 22 09:53:26 2011 +0200
+
+    Drop LINUX, NETBSD and DARWIN custom macros
+    
+    Heyu should now build correctly even with no hints from those old
+    Configure.sh provided macros on systems which relied on them before.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit d5b62f5120924c1d5fe436d06f4e8c8cfe29ed86
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Aug 22 09:52:46 2011 +0200
+
+    Depend RandMax value on macros availability, not system type
+    
+    Using custom system type dependent macros can be avoided this way,
+    getting us still closer to removing them completely from Configure.sh.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 3e45085622413ad7ec5ac5de0f9fbc38eaf24adf
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Aug 22 09:52:11 2011 +0200
+
+    Replace custom HASTZ macro with Autoconf test for timezone
+    
+    In continuation of conversion from custom Configure.sh script to
+    Autotconf provided methods, replace custom HASTZ macro with Autoconf
+    based test which checks for a timezone global variable being declared
+    and automatically defines a HAVE_DECL_TIMEZONE macro accordingly.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 2832835d872ea43776ddeb3592ee860a1676ae35
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Aug 22 09:51:04 2011 +0200
+
+    Drop a number of no longer used custom system type macros
+    
+    After latest cleanups, none of SOLARIS, FREEBSD, OPENBSD, ATTSVR4 nor
+    OSF1 macros should be required any longer for configuring Heyu on
+    platforms which have been using them so far. Drop all those symbol
+    definitions from Configure.sh.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit fd853038c621c02916e1765a6604d54ed00eb56a
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Aug 22 09:50:28 2011 +0200
+
+    Drop custom include conditions
+    
+    Since all non-portable headers are already included conditionally,
+    based on Autoconf provided macros, drop any other include conditions
+    that refer to custom macros defined with the Heyu Configure.sh script.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 813f1cff31efd66f15af92da8b2ee294a51d4d14
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Tue Aug 16 20:37:11 2011 +0200
+
+    Sanely include both sys/time.h and time.h
+    
+    To avoid potential conflicts between sys/time.h and time.h, check
+    for a TIME_WITH_SYS_TIME macro when trying to include both.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit bc545b220aa32c342d6f013b1c32bdd95444a2c4
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Aug 22 09:49:25 2011 +0200
+
+    Avoid using custom ATTSVR4 build time macro
+    
+    There is a macro, ATTSVR4, set with the Heyu Configure.sh script when
+    an ATT flavour of a UNIX system is detected. This macro is then used at
+    compile time for conditional inclusion of some header files, as well as
+    for selecting usleep() as a replacement for nanosleep(), which is
+    supposed to be missing.
+    
+    Since all conditionally included header files have already their
+    Autoconf based conditions in place, there is no need to use the
+    ATTSVR4 for this purpose any longer. However, there are cases where
+    this macro is used, together with others, in #ifdef..#else..#endif
+    constructs, which may require a different approach, so we leave them
+    untouched for now.
+    
+    For selecting usleep() over nanosleep(), we replace this macro with
+    a negation of the one generated with Autoconf check for nanosleep()
+    availability.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 121de8fceb2aab552f02991ca6c1b7fe8e1cc761
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Aug 22 09:48:25 2011 +0200
+
+    Get rid of the custom NSLEEP macro
+    
+    Still in preparation for substitution of the Heyu custom Configure.sh
+    script arbitrary selections with Autoconf provided equivalents, add a
+    check for nsleep() function availability. Replace the custom NSLEEP
+    macro with the resulting HAVE_NSLEEP wherever used for compiling the
+    nsleep() conditionally. It should be also safe to drop all ifdefs
+    containing NSLEEP where used for conditional inclusion of header files,
+    now having their dedicated availability checks and macros.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit e27cfdb58ae4c01c566fa03e6e7c59675ed33add
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Sat Aug 6 02:56:25 2011 +0200
+
+    Get rid of the custom HASSELECT macro
+    
+    After the select() function call has been removed from the Heyu code,
+    the custom HASSELECT macro usage has been limited to conditionally
+    including a few header files, now having their own dedicated
+    availability checks/macros. Then, the macro is no longer required and
+    can be dropped completely.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 65ec6b070fd73bfa860ce4c42c47dec9493bd35f
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Aug 22 09:47:12 2011 +0200
+
+    Add more Autoconf checks for platform specific headers
+    
+    There are several conditional includes in the Heyu source files, based
+    on custom system type dependent macros provided by Configure.sh script.
+    In preparation for removal of that script arbitrary selections in
+    favour of Autoconf generated rules, add checks for availability of
+    those conditionally included header files and use resulting macros in
+    include conditions. For consistency, also use those macros wherever the
+    same headers were included unconditionally so far.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit c2e0639dab6a3eaea37fdcec335dacf74b9dc112
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Aug 22 09:45:24 2011 +0200
+
+    Replace custom checks/macros with Autoconf equivalents
+    
+    There are a few checks for system calls or library functions
+    availability, performed while running the Heyu custom Configure.sh
+    script. Resulting macros are stored in the custom local.h header file.
+    
+    There is also a hardcoded macro, put as a compiler option into the
+    Configure.sh generated Makefile for selected host types, which enables
+    source code paths that call sigitimer().
+    
+    Replace all above with Autoconf provided tests and resulting macros.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 1c0acaa6f5f59b979cb61fe2cbc38f8868c5834d
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Wed Aug 17 03:37:48 2011 +0200
+
+    Conditionally include non-portable header files
+    
+    Autoconf generated config.h.in provided us with many hints about
+    potential portability issues in the Heyu code we may face if not
+    having them addressed correctly. A significant amount of those hints
+    is about header files that may not always exist.
+    
+    Include those potentially non-portable header files conditionally,
+    using config.h.in supported macro definitions.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 2de6cfaa5b85c589c02e224f26b7684933ec494b
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Wed Aug 17 03:22:56 2011 +0200
+
+    Replace gid_t with config.h provided GETGROUPS_T
+    
+    Autoconf generated config.h provides a GETGROUPS_T macro that should
+    be used in place of hardcoded gid_t, that is of limited portability.
+    Use it.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit d6f0daa8929c987ba9aea890b146b846bcff5892
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Thu Aug 18 19:25:08 2011 +0200
+
+    Check for libraries while running ./configure
+    
+    In order for selected function tests to succeed, like floor() and
+    sqrt() on a Linux system, extra libraries may have to be linked in.
+    Select a set of required libraries automatically with suitable Autoconf
+    library checks.
+    
+    Since I was not able to find out what functions were supposed to be
+    provided by libucb, libgen and libcmd libraries on the ATT SVR4
+    platform, I've left them not checked for. Moreover, functions I'm
+    looking for in librt, libsocket and libposix are rather guessed than
+    determined. Should linking Heyu ever break on any platform with error
+    messages about missing symbols, required library test would have to be
+    added or corrected, based on those messages.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 16c4acae99bd3ede227a3f10ab80d34f73b1b57e
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Jan 2 21:31:26 2012 +0100
+
+    Introduce Autoconf generated config.h
+    
+    In the process of migration from custom Configure.sh to Autoconf
+    methods, update automatically generated configure.ac source file
+    (breaking excessively long lines while being at it) and generate a
+    standard config.h header file from it during ./Configure.sh phase.
+    
+    Autoconf provided Makefile generation feature from Makefile.in template
+    has been turned off for now, left off to the existing ./Configure.sh
+    procedure.
+    
+    HAVE_CONFIG_H symbol and current directory as include source have been
+    declared explicitly before we finally switch to also using Automake,
+    which will provide those by default.
+    
+    For better readability, only configure.ac source file has been added to
+    the sources for now. To run ./Configure.sh script successfully for the
+    first time after unpacking the sources, the Autoconf package must be
+    installed. Two missing intermediate files, config.h.in template and
+    configure script, should be added before an official Heyu version with
+    Autoconf support is released, in order to drop unnecessary Autoconf
+    package dependency.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 46a5358abdf4446239c56b988c8338feda4c8310
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Mon Aug 22 11:24:12 2011 +0200
+
+    Protect Configure from being overwritten by Autoconf
+    
+    Rename the Configure script to Configure.sh in order to protect it from
+    being overwritten by the autoconf command, which creates a lower case
+    named configure script from configure.ac source file. This may happen
+    when a user tries to build Heyu from sources unpacked over a case
+    insensitive filesystem, like HFS+ for example.
+    
+    A similar problem arose in the past with the INSTALL file, being
+    overwritten with make implicit rules, copying install.sh to install
+    while processing 'make install'.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+
+commit 5fe9ec571ef8f8f74ce9b5a5b9193404adc8f0af
+Author: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Date:   Tue Aug 16 11:11:10 2011 +0200
+
+    Introduce Autoconf source configuration file
+    
+    Heyu uses a custom configuration system. Migrate to Autoconf methods
+    instead, for ease of the code portability maintenance, and for
+    convenience of binary package maintainers.
+    
+    First step: create a configuration file for Autoconf
+    
+    The new source file, configure.ac, has been auto generated with autoscan
+    utility, and will be further updated with following patches.
+    
+    Signed-off-by: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>

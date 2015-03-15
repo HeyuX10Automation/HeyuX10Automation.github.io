@@ -40,11 +40,96 @@ Automation for Linux, Unix, and Mac OS X</h1>
 <div id="main">
 <h2 style="text-align: left;">Download Page</h2>
 
-<h4 style="text-align: left;">Current Testing Release: 2.10-rc2</h4>
-<p>Release date: 2011-08-07</p>
-<p>List of changes:</p>
+<h4 style="text-align: left;">Current Testing Release: 2.11-rc1</h4>
+<p>Release date: 2012-05-17</p>
+<p>List of changes since stable release 2.10:</p>
 <pre>
-Janusz Krzysztofik (21):
+Janusz Krzysztofik (57):
+      Introduce Autoconf source configuration file
+      Protect Configure from being overwritten by Autoconf
+      Introduce Autoconf generated config.h
+      Check for libraries while running ./configure
+      Replace gid_t with config.h provided GETGROUPS_T
+      Conditionally include non-portable header files
+      Replace custom checks/macros with Autoconf equivalents
+      Add more Autoconf checks for platform specific headers
+      Get rid of the custom HASSELECT macro
+      Get rid of the custom NSLEEP macro
+      Avoid using custom ATTSVR4 build time macro
+      Sanely include both sys/time.h and time.h
+      Drop custom include conditions
+      Drop a number of no longer used custom system type macros
+      Replace custom HASTZ macro with Autoconf test for timezone
+      Depend RandMax value on macros availability, not system type
+      Drop LINUX, NETBSD and DARWIN custom macros
+      Drop unused NEEDGTIME macro
+      Use S_ISDIR macro if defined, not limited to POSIX
+      Replace HAS* macro names with more common HAVE_* forms
+      Fix problematic conditional build directives
+      Delegate -no<feature> Configure.sh switch processing to Autoconf
+      Check for struct termios/termio instead of custom defined symbols
+      Replace custom POSIX symbol with unistd.h provided _POSIX_VERSION
+      Add Autoconf support to recent RFXLAN related code additions
+      Delegate flags/counters/timers Configure.sh setup to Autoconf
+      Replace custom VOID symbol with Autoconf equivalent
+      Let Autoconf create Makefile from Makefile.in
+      Introduce Automake source configuration file
+      Pass runtime directory locations through Autoconf
+      Move preprocessor options from CFLAGS to CPPFLAGS
+      Use Autoconf detected compiler program name and options
+      Pass linker options through Autoconf
+      Link with Autoconf selected libraries
+      Move target directories selection to Autoconf
+      Keep default ownership of installed binary
+      Call install.sh from 'make install' only if requested
+      Switch over to using Automake
+      Move SCO detection and symbol definition to configure.ac
+      Don't duplicate package version definition
+      Introduce ./configure based installation instructions
+      Add autoreconf generated and installed files
+      Drop no longer required call to autoreconf from Configure.sh
+      Provide advanced installation instructions
+      Use separate queues for RFXCOM receiver modules
+      Enable detection of Oregon RTGR328N radio clock signals
+      Fix ID code handling of ORE_DT1 type sensors
+      Add support for decoding ORE_DT1 signals
+      Fix ORE_DT1 double burst transmissions reported twice
+      Fix ORE_DT1 battery status mode
+      Pass date/time data from Oregon DT sensors to Heyu scripts
+      Implement oredt function to be used in launch conditions
+      Implement 'not changed' condition for oreDT signals
+      Pass stored date/time values to Heyu scripts
+      Include stored date/time data in 'show oregon' output
+      Add new state function for examining stored date/time data
+      Heyu 2.11-rc1
+</pre>
+<table>
+<tr><td><a href="/download/heyu-2.11-rc1.tar.gz">heyu-2.11-rc1.tar.gz</a>&nbsp;&nbsp;</td>
+<td>Full package with source code</td></tr>
+<tr><td><a href="/download/ChangeLog-2.11-rc1">ChangeLog-2.11-rc1</a>&nbsp;&nbsp;</td>
+<td>Full description of all changes against release 2.10</td></tr>
+<tr><td><a href="/download/patch-2.11-rc1.gz">patch-2.11-rc1.gz</a>&nbsp;&nbsp;</td>
+<td>All changes against release 2.10 in a single patch</td></tr>
+</table>
+
+<h4 style="text-align: left;">Current Stable Release: 2.10</h4>
+<p>Release date: 2012-05-01</p>
+<p>List of changes since release candidate 2.10-rc3:</p>
+<pre>
+Daniel B. Suthers (1):
+      Switch over to GPL
+
+Janusz Krzysztofik (3):
+      Fix find_lockup_scripts() function definition mismatch
+      Update Makefile.in to follow GPL related changes
+      Heyu 2.10
+</pre>
+<p>List of changes against release 2.9.5:</p>
+<pre>
+Daniel B. Suthers (1):
+      Switch over to GPL
+
+Janusz Krzysztofik (31):
       Relay: Prevent incoming powerline signals from being destroyed by other signals
       Cmd: Avoid hiding a CM11 message got when awaiting 0x55
       Engine: provide check4poll() with checksums
@@ -58,6 +143,7 @@ Janusz Krzysztofik (21):
       Use microsleep(ENGINE_POLL) instead of sleep(1)
       Allow for precise dawn/dusk, night/notnight definition
       Add support for RFXLAN, a networked RFXCOM variant
+      Heyu 2.10-rc1
       Drop millisleep(10) from xread() not only on Darwin
       Completely stop using select() as a *sleep() replacement
       Compare RFXCOM X10 signal bursts by type, not by length
@@ -66,44 +152,67 @@ Janusz Krzysztofik (21):
       Fix single 0xff checksum processing
       Prevent from checksums being incorrectly recognised as events
       Update RCS related Heyu documentation bits
+      Heyu 2.10-rc2
+      Revert "Compare RFXCOM X10 signal bursts by type, not by length"
+      Enhance recognition of X10 Standard RF same signal bursts
+      Fix argument type passed from check4poll() to set_counter()
+      Attempt to fix Visonic support
+      Engine: don't handle checksums when processing RF signals
+      Fix find_lockup_scripts() function definition mismatch
+      Update Makefile.in to follow GPL related changes
+      Heyu 2.10
 </pre>
 <table>
-<tr><td><a href="/download/heyu-2.10-rc2.tar.gz">heyu-2.10-rc2.tar.gz</a>&nbsp;&nbsp;</td>
+<tr><td><a href="/download/heyu-2.10.tar.gz">heyu-2.10.tar.gz</a>&nbsp;&nbsp;</td>
 <td>Full package with source code</td></tr>
-<tr><td><a href="/download/ChangeLog-2.10-rc2">ChangeLog-2.10-rc2</a>&nbsp;&nbsp;</td>
-<td>Full description of all changes against release 2.9.4</td></tr>
-<tr><td><a href="/download/patch-2.10-rc2.gz">patch-2.10-rc2.gz</a>&nbsp;&nbsp;</td>
-<td>All changes against release 2.9.4 in a single patch</td></tr>
-</table>
-
-<h4 style="text-align: left;">Current Stable Release: 2.9.4</h4>
-<p>Release date: 2011-08-05</p>
-<p>List of changes:</p>
-<pre>
-Janusz Krzysztofik (6):
-      Fix KAKU key range not covering key number 16
-      Use microsleep(ENGINE_POLL) instead of sleep(1)
-      Fix 'changed' handling for rain sensors
-      Allow for less frequent spool file polling
-      Fix 'Poll received unknown value' wrong byte count
-      Engine: Prevent from buffer overflows
-</pre>
-<table>
-<tr><td><a href="/download/heyu-2.9.4.tar.gz">heyu-2.9.4.tar.gz</a>&nbsp;&nbsp;</td>
-<td>Full package with source code</td></tr>
-<tr><td><a href="/download/ChangeLog-2.9.4">ChangeLog-2.9.4</a>&nbsp;&nbsp;</td>
-<td>Full description of all changes since last release</td></tr>
-<tr><td><a href="/download/patch-2.9.4.gz">patch-2.9.4.gz</a>&nbsp;&nbsp;</td>
-<td>All changes since last release in a single patch</td></tr>
+<tr><td><a href="/download/ChangeLog-2.10">ChangeLog-2.10</a>&nbsp;&nbsp;</td>
+<td>Full description of all changes against release 2.9.5</td></tr>
+<tr><td><a href="/download/patch-2.10.gz">patch-2.10.gz</a>&nbsp;&nbsp;</td>
+<td>All changes against release 2.9.5 in a single patch</td></tr>
 </table>
 
 <h4 style="text-align: left;">Previous Releases</h4>
 
 <table>
+<tr valign="top"><td><a href="/download/heyu-2.10-rc3.tar.gz">heyu-2.10-rc3.tgz</a>&nbsp;&nbsp;</td>
+<td>Full package with source code
+(<a href="/download/ChangeLog-2.10-rc3">changelog</a>,
+<a href="/download/patch-2.10-rc3.gz">patch</a> against 2.9.5),
+released 2011-11-19
+</td></tr>
+
+<tr valign="top"><td><a href="/download/heyu-2.9.5.tar.gz">heyu-2.9.5.tgz</a>&nbsp;&nbsp;</td>
+<td>Full package with source code
+(<a href="/download/ChangeLog-2.9.5">changelog</a>,
+<a href="/download/patch-2.9.5.gz">patch</a> against 2.9.4),
+released 2011-10-26
+</td></tr>
+
+<tr valign="top"><td><a href="/download/heyu-2.10-rc2.tar.gz">heyu-2.10-rc2.tgz</a>&nbsp;&nbsp;</td>
+<td>Full package with source code
+(<a href="/download/ChangeLog-2.10-rc2">changelog</a>,
+<a href="/download/patch-2.10-rc2.gz">patch</a> against 2.9.4),
+released 2011-08-07
+</td></tr>
+
+<tr valign="top"><td><a href="/download/heyu-2.9.4.tar.gz">heyu-2.9.4.tgz</a>&nbsp;&nbsp;</td>
+<td>Full package with source code
+(<a href="/download/ChangeLog-2.9.4">changelog</a>,
+<a href="/download/patch-2.9.4.gz">patch</a> against 2.9.3),
+released 2011-08-05
+</td></tr>
+
+<tr valign="top"><td><a href="/download/heyu-2.10-rc1.tar.gz">heyu-2.10-rc1.tgz</a>&nbsp;&nbsp;</td>
+<td>Full package with source code
+(<a href="/download/ChangeLog-2.10-rc1">changelog</a>,
+<a href="/download/patch-2.10-rc1.gz">patch</a> against 2.9.3),
+released 2011-02-27
+</td></tr>
+
 <tr valign="top"><td><a href="/download/heyu-2.9.3.tar.gz">heyu-2.9.3.tgz</a>&nbsp;&nbsp;</td>
 <td>Full package with source code
 (<a href="/download/ChangeLog-2.9.3">changelog</a>,
-<a href="/download/patch-2.9.3.gz">patch</a>),
+<a href="/download/patch-2.9.3.gz">patch</a> against 2.9.2),
 released 2011-02-26
 </td></tr>
 
